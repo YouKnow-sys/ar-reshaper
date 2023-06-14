@@ -1,10 +1,11 @@
 [package]
 name = "ar-reshaper"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["Saeid Ghafari <saeid025@yahoo.com>"]
 edition = "2021"
 description = "Reconstruct Arabic sentences to be used in applications that don't support Arabic script."
 repository = "https://github.com/YouKnow-sys/ar-reshaper"
+documentation = "https://docs.rs/ar-reshaper"
 license = "MIT"
 keywords = ["arabic", "persian", "turkish", "reshape"]
 categories = ["algorithms"]
