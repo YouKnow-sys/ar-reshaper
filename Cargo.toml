@@ -1,0 +1,26 @@
+[package]
+name = "ar-reshaper"
+version = "0.2.0"
+authors = ["Saeid Ghafari <saeid025@yahoo.com>"]
+edition = "2021"
+description = "Reconstruct Arabic sentences to be used in applications that don't support Arabic script."
+
+license = "MIT"
+keywords = ["arabic", "persian", "turkish", "reshape"]
+categories = ["algorithms"]
+
+[features]
+default = []
+config_from_font = ["ttf-parser"]
+
+[dependencies]
+bitflags = { version = "2.3.1" }
+ttf-parser = { version = "0.19.0", optional = true }
+
+[[example]]
+name = "reshape_line"
+path = "examples/reshape_line.rs"
+
+[[example]]
+name = "reshape_lines"
+path = "examples/reshape_lines.rs"
