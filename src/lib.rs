@@ -4,7 +4,7 @@
 //! 
 //! ## Usage:
 //! ```
-//! use sentences_reshaper::{ArabicReshaper, reshape_line};
+//! use ar_reshaper::{ArabicReshaper, reshape_line};
 //! 
 //! let reshaper = ArabicReshaper::default();
 //! 

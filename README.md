@@ -1,4 +1,7 @@
 # Arabic Reshaper Rust
+[![unsafe forbidden](https://img.shields.io/badge/unsafe-forbidden-success.svg)](https://github.com/rust-secure-code/safety-dance/)
+[![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/YouKnow-sys/ar-reshaper/blob/master/LICENSE-MIT)
+
 Reconstruct Arabic sentences to be used in applications that don't support Arabic script.
 
 # Usage:
