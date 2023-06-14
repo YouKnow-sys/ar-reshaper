@@ -8,7 +8,7 @@
 //! 
 //! let reshaper = ArabicReshaper::default();
 //! 
-//! // You can reshape just a single string
+//! // You can reshape just a single string using
 //! println!("{}", reshaper.reshape("سلام دنیا"));
 //! // or [`reshape_line`] method if you dont want to construct the [ArabicReshaper]
 //! // and you just want to reshape a line with default settings

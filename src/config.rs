@@ -115,7 +115,7 @@ impl ReshaperConfig {
         }
 
         Self {
-            language: language,
+            language,
             support_ligatures: !ligatures_flags.contains(LigaturesFlags::ENABLE_NO_LIGATURES),
             ligatures,
             ..Default::default()
