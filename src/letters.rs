@@ -513,6 +513,7 @@ pub static LETTERS_KURDISH: [(char, FormsType); 80] = [
     ('\u{200D}', ["\u{200D}", "\u{200D}", "\u{200D}", "\u{200D}"]),
 ];
 
+#[derive(Clone)]
 pub struct Letters(pub(crate) &'static [(char, FormsType)]);
 
 impl Default for Letters {

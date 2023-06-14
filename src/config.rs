@@ -17,6 +17,7 @@ bitflags::bitflags! {
 
 /// Supported languages
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Language {
     /// `Arabic` is default and recommended to work in most of the cases and
     #[default]
@@ -28,11 +29,19 @@ pub enum Language {
     Kurdish,
 }
 
+impl std::fmt::Display for Language {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{self:?}")
+    }
+}
+
 /// The main Config struct for the [ArabicReshaper]
 /// 
 /// You can change all kinds of settings about [ArabicReshaper] using this struct.
 /// 
 /// [ArabicReshaper]: crate::reshaper::ArabicReshaper
+#[derive(Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ReshaperConfig {
     /// Supported languages are: **Arabic, ArabicV2, Kurdish**
     /// More languages might be supported soon.
@@ -125,7 +134,7 @@ impl ReshaperConfig {
     /// Create a new [ReshaperConfig] based on the input **true type font** font.\
     /// Keep in mind that we are currently using `ttf-parser` crate for parsing ttf
     /// files, this crate doesn't support cmap8, this may change in future.
-    #[cfg(feature = "config_from_font")]
+    #[cfg(feature = "ttf-parser")]
     pub fn from_font(
         bytes: &[u8],
         language: Language,

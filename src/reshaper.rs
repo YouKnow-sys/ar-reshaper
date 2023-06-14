@@ -31,7 +31,7 @@ static HARAKAT_RE: [RangeInclusive<char>; 9] = [
 
 /// # ArabicReshaper
 /// the main type for reconstructing sentences to be used in applications that don't support Arabic script.
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct ArabicReshaper {
     config: ReshaperConfig,
     letters: Letters,

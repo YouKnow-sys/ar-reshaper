@@ -36,7 +36,7 @@ println!("{:#?}", reshaper.reshape_lines(lines));
 You can check **example** or **test** directory for more examples.
 
 # Optional features:
-- **config_from_font**: if you enable this feature the `ReshaperConfig` method will have another extra
+- **ttf-parser**: if you enable this feature the `ReshaperConfig` method will have another extra
 method named `from_font` that can be used to enable ligatures only if they exist in the input font.
 
 ## Credits:
