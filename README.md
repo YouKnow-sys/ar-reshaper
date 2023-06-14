@@ -1,4 +1,5 @@
 # Arabic Reshaper Rust
+[![Latest version](https://img.shields.io/crates/v/ar-reshaper)](https://crates.io/crates/ar-reshaper)
 [![Build Status](https://github.com/YouKnow-sys/ar-reshaper/actions/workflows/rust.yml/badge.svg)](https://github.com/YouKnow-sys/ar-reshaper/actions?workflow=Rust%20CI)
 [![unsafe forbidden](https://img.shields.io/badge/unsafe-forbidden-success.svg)](https://github.com/rust-secure-code/safety-dance/)
 [![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/YouKnow-sys/ar-reshaper/blob/master/LICENSE-MIT)
