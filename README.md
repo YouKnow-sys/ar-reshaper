@@ -8,7 +8,7 @@ Reconstruct Arabic sentences to be used in applications that don't support Arabi
 # Usage:
 resahpe a single line of string
 ```rust
-use sentences_reshaper::{ArabicReshaper, reshape_line};
+use ar_reshaper::{ArabicReshaper, reshape_line};
 
 let reshaper = ArabicReshaper::default();
 
@@ -21,7 +21,7 @@ println!("{}", reshape_line("سلام دنیا"));
 ```
 reshape a slice of strings
 ```rust
-use sentences_reshaper::{ArabicReshaper}
+use ar_reshaper::{ArabicReshaper}
 
 let reshaper = ArabicReshaper::default();
 
