@@ -182,7 +182,6 @@ pub static LETTERS_ARABIC: [(char, FormsType); 78] = [
     ('\u{06D2}', ["\u{FBAE}", "", "", "\u{FBAF}"]),
     // ARABIC LETTER YEH BARREE WITH HAMZA ABOVE
     ('\u{06D3}', ["\u{FBB0}", "", "", "\u{FBB1}"]),
-
     // ZWJ
     ('\u{200D}', ["\u{200D}", "\u{200D}", "\u{200D}", "\u{200D}"]),
 ];
@@ -548,7 +547,7 @@ impl Letters {
 
     /// Try to get the forms corresponding the letters
     pub fn get(&self, key: &char) -> Option<&FormsType> {
-        self.0.iter().find(|(k,_)| k == key).map(|(_, f)| f)
+        self.0.iter().find(|(k, _)| k == key).map(|(_, f)| f)
     }
 
     pub fn connects_with_letter_before(&self, letter: char) -> bool {
@@ -573,6 +572,6 @@ impl Index<&char> for Letters {
     type Output = FormsType;
 
     fn index(&self, index: &char) -> &Self::Output {
-        &self.0.iter().find(|(k,_)| k == index).unwrap().1
+        &self.0.iter().find(|(k, _)| k == index).unwrap().1
     }
 }

@@ -36,9 +36,9 @@ impl std::fmt::Display for Language {
 }
 
 /// The main Config struct for the [ArabicReshaper]
-/// 
+///
 /// You can change all kinds of settings about [ArabicReshaper] using this struct.
-/// 
+///
 /// [ArabicReshaper]: crate::reshaper::ArabicReshaper
 #[derive(Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
