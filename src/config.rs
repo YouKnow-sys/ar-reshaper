@@ -1,5 +1,6 @@
 use crate::ligatures::*;
 
+#[cfg(feature = "bitflags")]
 bitflags::bitflags! {
     /// Flags to enable some or all groups of ligatures
     #[derive(Clone, Copy)]
@@ -15,11 +16,37 @@ bitflags::bitflags! {
     }
 }
 
+#[cfg(not(feature = "bitflags"))]
+#[derive(Default, Clone, Copy)]
+pub struct LigaturesFlags {
+    pub sentences_ligatures: bool,
+    pub words_ligatures: bool,
+    pub letters_ligatures: bool,
+}
+
+#[cfg(not(feature = "bitflags"))]
+impl LigaturesFlags {
+    /// Enable all ligatures
+    pub fn all() -> Self {
+        Self { sentences_ligatures: true, words_ligatures: true, letters_ligatures: true }
+    }
+
+    /// Disable all ligatures
+    pub fn none() -> Self {
+        Self { sentences_ligatures: false, words_ligatures: false, letters_ligatures: false }
+    }
+
+    /// Check if no ligature is enabled
+    pub fn is_none_enabled(&self) -> bool {
+        !self.sentences_ligatures && !self.words_ligatures && !self.letters_ligatures
+    }
+}
+
 /// Supported languages
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Language {
-    /// `Arabic` is default and recommended to work in most of the cases and
+    /// `Arabic` is default and recommended to work in most of the cases
     #[default]
     Arabic,
     /// `ArabicV2` is only to be used with certain font that you run into missing chars
@@ -97,9 +124,13 @@ impl Default for ReshaperConfig {
 
 impl ReshaperConfig {
     /// Create a new [ReshaperConfig] with the given [LigaturesFlags].
-    pub fn new(language: Language, ligatures_flags: LigaturesFlags) -> Self {
+    pub fn new(
+        language: Language,
+        ligatures_flags: LigaturesFlags,
+    ) -> Self {
         let mut ligatures = vec![false; LIGATURES.len()];
 
+        #[cfg(feature = "bitflags")]
         if !ligatures_flags.contains(LigaturesFlags::ENABLE_NO_LIGATURES) {
             for (flag, range) in [
                 (
@@ -123,9 +154,27 @@ impl ReshaperConfig {
             }
         }
 
+        #[cfg(not(feature = "bitflags"))]
+        if !ligatures_flags.is_none_enabled() {
+            for (enabled, range) in [
+                (ligatures_flags.sentences_ligatures, SENTENCES_LIGATURES_RANGE),
+                (ligatures_flags.words_ligatures, WORDS_LIGATURES_RANGE),
+                (ligatures_flags.letters_ligatures, LETTERS_LIGATURES_RANGE),
+            ] {
+                if enabled {
+                    ligatures[range]
+                        .iter_mut()
+                        .for_each(|enabled| *enabled = true);
+                }
+            }
+        }
+
         Self {
             language,
+            #[cfg(feature = "bitflags")]
             support_ligatures: !ligatures_flags.contains(LigaturesFlags::ENABLE_NO_LIGATURES),
+            #[cfg(not(feature = "bitflags"))]
+            support_ligatures: !ligatures_flags.is_none_enabled(),
             ligatures,
             ..Default::default()
         }
@@ -146,7 +195,10 @@ impl ReshaperConfig {
         let font = Face::parse(bytes, 0).map_err(|e| e.to_string())?;
 
         let mut config = Self {
+            #[cfg(feature = "bitflags")]
             support_ligatures: !ligatures_flags.contains(LigaturesFlags::ENABLE_NO_LIGATURES),
+            #[cfg(not(feature = "bitflags"))]
+            support_ligatures: !ligatures_flags.is_none_enabled(),
             ..Default::default()
         };
 
@@ -183,6 +235,7 @@ impl ReshaperConfig {
                 }
             };
 
+            #[cfg(feature = "bitflags")]
             if !ligatures_flags.contains(LigaturesFlags::ENABLE_NO_LIGATURES) {
                 for (flag, range) in [
                     (
@@ -199,6 +252,19 @@ impl ReshaperConfig {
                     ),
                 ] {
                     if ligatures_flags.contains(flag) {
+                        process_ligatures(&LIGATURES[range]);
+                    }
+                }
+            }
+
+            #[cfg(not(feature = "bitflags"))]
+            if !ligatures_flags.is_none_enabled() {
+                for (enabled, range) in [
+                    (ligatures_flags.sentences_ligatures, SENTENCES_LIGATURES_RANGE),
+                    (ligatures_flags.words_ligatures, WORDS_LIGATURES_RANGE),
+                    (ligatures_flags.letters_ligatures, LETTERS_LIGATURES_RANGE),
+                ] {
+                    if enabled {
                         process_ligatures(&LIGATURES[range]);
                     }
                 }
