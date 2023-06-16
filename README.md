@@ -34,6 +34,14 @@ let lines = [
 println!("{:#?}", reshaper.reshape_lines(lines));
 // or you can just use reshape method in a loop... the choice is yours.
 ```
+reshape strings on a iterator
+```rust
+use ar_reshaper::ArabicReshaperExt;
+
+for line in ["یک", "دو"].iter().reshape_default() {
+    println!("{line}");
+}
+```
 You can check **example** or **test** directory for more examples.
 
 # Optional features:
