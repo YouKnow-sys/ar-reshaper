@@ -1,5 +1,3 @@
-use std::ops::Index;
-
 // Each letter is of the format:
 //
 //   ('<letter>', <replacement>)
@@ -14,6 +12,8 @@ use std::ops::Index;
 // <letter> should be in medial form, and <final> is the replacement in case
 // <letter> should be in final form. If no replacement is specified for a form,
 // then no that means the letter doesn't support this form.
+use std::ops::Index;
+
 use crate::Language;
 
 type FormsType = [&'static str; 4];
