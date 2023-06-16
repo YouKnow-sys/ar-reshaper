@@ -3,21 +3,37 @@
 //! Reconstruct Arabic sentences to be used in applications that don't support Arabic script.
 //!
 //! ## Usage:
-//! ```
+//! reshape a single string
+//! ```rust
 //! use ar_reshaper::{ArabicReshaper, reshape_line};
 //!
 //! let reshaper = ArabicReshaper::default();
 //!
 //! // You can reshape just a single string using
 //! println!("{}", reshaper.reshape("سلام دنیا"));
-//! // or [`reshape_line`] method if you dont want to construct the [ArabicReshaper]
+//! // or `reshape_line` method if you dont want to construct the [ArabicReshaper]
 //! // and you just want to reshape a line with default settings
 //! println!("{}", reshape_line("سلام دنیا"));
 //! // Both will reconstruct the string and print `ﺳﻼﻡ ﺩﻧﯿﺎ`
+//! ```
 //!
-//! // Or a slice of strings
+//! reshape a slice of strings
+//! ```rust
+//! use ar_reshaper::ArabicReshaper;
+//!
+//! let reshaper = ArabicReshaper::default();
+//!
 //! println!("{:#?}", reshaper.reshape_lines(&["سلام خوبی؟", "عالیم ممنون"]));
 //! // this will reconstruct the string and print  ["ﺳﻼﻡ ﺧﻮﺑﯽ؟", "ﻋﺎﻟﯿﻢ ﻣﻤﻨﻮﻥ"]
+//! ```
+//!
+//! You can also reshape strings on a iterator
+//! ```rust
+//! use ar_reshaper::ArabicReshaperExt;
+//!
+//! for line in ["یک", "دو"].iter().reshape_default() {
+//!     println!("{line}");
+//! }
 //! ```
 //!
 //! A rusty rewrite of [python-arabic-reshaper](https://github.com/mpcabd/python-arabic-reshaper)

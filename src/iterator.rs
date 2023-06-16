@@ -25,7 +25,7 @@ where
 /// Wrap an iterator to reshape strings
 pub trait ArabicReshaperExt: Iterator + Sized
 where
-    Self::Item: AsRef<str>
+    Self::Item: AsRef<str>,
 {
     /// Reshape the iterator with the default [ArabicReshaper] config
     fn reshape_default(self) -> ArabicReshaperIter<Self> {
