@@ -7,7 +7,7 @@ fn default_persian_reshaping() {
     reshaper.modify_config(|c| {
         c.delete_harakat = false;
     });
-    
+
     let cases = [
         ("سلام، حالت چطوره؟", "ﺳﻼﻡ، ﺣﺎﻟﺖ ﭼﻄﻮﺭﻩ؟"),
         ("مَمنون، عالیَم", "ﻣَﻤﻨﻮﻥ، ﻋﺎﻟﯿَﻢ"),
@@ -58,16 +58,22 @@ fn zwj_reshaping() {
     let reshaper = ArabicReshaper::default();
 
     const BEH: char = 'ب';
-    let beh_isolated = LETTERS_ARABIC.iter().find(|(k, _)| k == &BEH).unwrap().1[ISOLATED as usize].to_owned();
-    let beh_initial = LETTERS_ARABIC.iter().find(|(k, _)| k == &BEH).unwrap().1[INITIAL as usize].to_owned();
-    let beh_medial = LETTERS_ARABIC.iter().find(|(k, _)| k == &BEH).unwrap().1[MEDIAL as usize].to_owned();
-    let beh_final = LETTERS_ARABIC.iter().find(|(k, _)| k == &BEH).unwrap().1[FINAL as usize].to_owned();
+    let beh_isolated =
+        LETTERS_ARABIC.iter().find(|(k, _)| k == &BEH).unwrap().1[ISOLATED as usize].to_owned();
+    let beh_initial =
+        LETTERS_ARABIC.iter().find(|(k, _)| k == &BEH).unwrap().1[INITIAL as usize].to_owned();
+    let beh_medial =
+        LETTERS_ARABIC.iter().find(|(k, _)| k == &BEH).unwrap().1[MEDIAL as usize].to_owned();
+    let beh_final =
+        LETTERS_ARABIC.iter().find(|(k, _)| k == &BEH).unwrap().1[FINAL as usize].to_owned();
 
     const ALEF: char = 'ا';
-    let alef_final = LETTERS_ARABIC.iter().find(|(k, _)| k == &ALEF).unwrap().1[FINAL as usize].to_owned();
+    let alef_final =
+        LETTERS_ARABIC.iter().find(|(k, _)| k == &ALEF).unwrap().1[FINAL as usize].to_owned();
 
     const HAMZA: char = 'ء';
-    let hamza_isolated = LETTERS_ARABIC.iter().find(|(k, _)| k == &HAMZA).unwrap().1[ISOLATED as usize].to_owned();
+    let hamza_isolated =
+        LETTERS_ARABIC.iter().find(|(k, _)| k == &HAMZA).unwrap().1[ISOLATED as usize].to_owned();
 
     let zwj = ZWJ.to_string();
     let alef = ALEF.to_string();

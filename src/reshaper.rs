@@ -231,7 +231,7 @@ impl ArabicReshaper {
     pub fn reshape_lines<S, L>(&self, lines: L) -> Vec<String>
     where
         S: AsRef<str>,
-        L: AsRef<[S]>
+        L: AsRef<[S]>,
     {
         let mut result = Vec::with_capacity(lines.as_ref().len());
         for line in lines.as_ref() {
