@@ -46,7 +46,7 @@ pub use reshaper::ArabicReshaper;
 
 mod config;
 mod iterator;
-mod letters;
+pub mod letters;
 mod ligatures;
 mod reshaper;
 #[cfg(test)]

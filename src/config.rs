@@ -1,4 +1,4 @@
-use crate::ligatures::*;
+use crate::{letters::LettersType, ligatures::*};
 
 #[cfg(feature = "bitflags")]
 bitflags::bitflags! {
@@ -28,12 +28,20 @@ pub struct LigaturesFlags {
 impl LigaturesFlags {
     /// Enable all ligatures
     pub fn all() -> Self {
-        Self { sentences_ligatures: true, words_ligatures: true, letters_ligatures: true }
+        Self {
+            sentences_ligatures: true,
+            words_ligatures: true,
+            letters_ligatures: true,
+        }
     }
 
     /// Disable all ligatures
     pub fn none() -> Self {
-        Self { sentences_ligatures: false, words_ligatures: false, letters_ligatures: false }
+        Self {
+            sentences_ligatures: false,
+            words_ligatures: false,
+            letters_ligatures: false,
+        }
     }
 
     /// Check if no ligature is enabled
@@ -54,6 +62,8 @@ pub enum Language {
     /// `Kurdish` if you are using Kurdish Sarchia font is recommended,
     /// work with both unicode and classic Arabic-Kurdish keybouard
     Kurdish,
+    /// Custom language
+    Custom(&'static [LettersType]),
 }
 
 impl std::fmt::Display for Language {
@@ -124,10 +134,7 @@ impl Default for ReshaperConfig {
 
 impl ReshaperConfig {
     /// Create a new [ReshaperConfig] with the given [LigaturesFlags].
-    pub fn new(
-        language: Language,
-        ligatures_flags: LigaturesFlags,
-    ) -> Self {
+    pub fn new(language: Language, ligatures_flags: LigaturesFlags) -> Self {
         let mut ligatures = vec![false; LIGATURES.len()];
 
         #[cfg(feature = "bitflags")]
@@ -157,7 +164,10 @@ impl ReshaperConfig {
         #[cfg(not(feature = "bitflags"))]
         if !ligatures_flags.is_none_enabled() {
             for (enabled, range) in [
-                (ligatures_flags.sentences_ligatures, SENTENCES_LIGATURES_RANGE),
+                (
+                    ligatures_flags.sentences_ligatures,
+                    SENTENCES_LIGATURES_RANGE,
+                ),
                 (ligatures_flags.words_ligatures, WORDS_LIGATURES_RANGE),
                 (ligatures_flags.letters_ligatures, LETTERS_LIGATURES_RANGE),
             ] {
@@ -260,7 +270,10 @@ impl ReshaperConfig {
             #[cfg(not(feature = "bitflags"))]
             if !ligatures_flags.is_none_enabled() {
                 for (enabled, range) in [
-                    (ligatures_flags.sentences_ligatures, SENTENCES_LIGATURES_RANGE),
+                    (
+                        ligatures_flags.sentences_ligatures,
+                        SENTENCES_LIGATURES_RANGE,
+                    ),
                     (ligatures_flags.words_ligatures, WORDS_LIGATURES_RANGE),
                     (ligatures_flags.letters_ligatures, LETTERS_LIGATURES_RANGE),
                 ] {

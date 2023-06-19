@@ -16,18 +16,20 @@ use std::ops::Index;
 
 use crate::Language;
 
-type FormsType = [&'static str; 4];
+pub type LettersType = (char, FormsType);
 
-pub const UNSHAPED: i16 = 255;
-pub const ISOLATED: i16 = 0;
-pub const INITIAL: i16 = 1;
-pub const MEDIAL: i16 = 2;
-pub const FINAL: i16 = 3;
+pub type FormsType = [&'static str; 4];
 
-pub const TATWEEL: char = '\u{0640}';
-pub const ZWJ: char = '\u{200D}';
+pub(crate) const UNSHAPED: i16 = 255;
+pub(crate) const ISOLATED: i16 = 0;
+pub(crate) const INITIAL: i16 = 1;
+pub(crate) const MEDIAL: i16 = 2;
+pub(crate) const FINAL: i16 = 3;
 
-pub static LETTERS_ARABIC: [(char, FormsType); 78] = [
+pub(crate) const TATWEEL: char = '\u{0640}';
+pub(crate) const ZWJ: char = '\u{200D}';
+
+pub static LETTERS_ARABIC: [LettersType; 78] = [
     // ARABIC LETTER HAMZA
     ('\u{0621}', ["\u{FE80}", "", "", ""]),
     // ARABIC LETTER ALEF WITH MADDA ABOVE
@@ -186,7 +188,7 @@ pub static LETTERS_ARABIC: [(char, FormsType); 78] = [
     ('\u{200D}', ["\u{200D}", "\u{200D}", "\u{200D}", "\u{200D}"]),
 ];
 
-pub static LETTERS_ARABIC_V2: [(char, FormsType); 80] = [
+pub static LETTERS_ARABIC_V2: [LettersType; 80] = [
     // ARABIC LETTER HAMZA
     ('\u{0621}', ["\u{FE80}", "", "", ""]),
     // ARABIC LETTER ALEF WITH MADDA ABOVE
@@ -349,7 +351,7 @@ pub static LETTERS_ARABIC_V2: [(char, FormsType); 80] = [
     ('\u{200D}', ["\u{200D}", "\u{200D}", "\u{200D}", "\u{200D}"]),
 ];
 
-pub static LETTERS_KURDISH: [(char, FormsType); 80] = [
+pub static LETTERS_KURDISH: [LettersType; 80] = [
     // ARABIC LETTER HAMZA
     ('\u{0621}', ["\u{FE80}", "", "", ""]),
     // ARABIC LETTER ALEF WITH MADDA ABOVE
@@ -513,7 +515,7 @@ pub static LETTERS_KURDISH: [(char, FormsType); 80] = [
 ];
 
 #[derive(Clone)]
-pub struct Letters(pub(crate) &'static [(char, FormsType)]);
+pub(crate) struct Letters(pub(crate) &'static [LettersType]);
 
 impl Default for Letters {
     fn default() -> Self {
@@ -528,6 +530,7 @@ impl Letters {
             Language::Arabic => &LETTERS_ARABIC,
             Language::ArabicV2 => &LETTERS_ARABIC_V2,
             Language::Kurdish => &LETTERS_KURDISH,
+            Language::Custom(c) => c,
         })
     }
 
@@ -537,6 +540,7 @@ impl Letters {
             Language::Arabic => &LETTERS_ARABIC,
             Language::ArabicV2 => &LETTERS_ARABIC_V2,
             Language::Kurdish => &LETTERS_KURDISH,
+            Language::Custom(c) => c,
         };
     }
 
