@@ -16,6 +16,7 @@ bitflags::bitflags! {
     }
 }
 
+/// Flags to enable some or all groups of ligatures
 #[cfg(not(feature = "bitflags"))]
 #[derive(Default, Clone, Copy)]
 pub struct LigaturesFlags {

@@ -16,8 +16,10 @@ use std::ops::Index;
 
 use crate::Language;
 
+/// Type of letters
 pub type LettersType = (char, FormsType);
 
+/// Type of forms inside the letters
 pub type FormsType = [&'static str; 4];
 
 pub(crate) const UNSHAPED: i16 = 255;
@@ -29,6 +31,7 @@ pub(crate) const FINAL: i16 = 3;
 pub(crate) const TATWEEL: char = '\u{0640}';
 pub(crate) const ZWJ: char = '\u{200D}';
 
+/// Arabic letters
 pub static LETTERS_ARABIC: [LettersType; 78] = [
     // ARABIC LETTER HAMZA
     ('\u{0621}', ["\u{FE80}", "", "", ""]),
@@ -188,6 +191,7 @@ pub static LETTERS_ARABIC: [LettersType; 78] = [
     ('\u{200D}', ["\u{200D}", "\u{200D}", "\u{200D}", "\u{200D}"]),
 ];
 
+/// Arabic letters version 2
 pub static LETTERS_ARABIC_V2: [LettersType; 80] = [
     // ARABIC LETTER HAMZA
     ('\u{0621}', ["\u{FE80}", "", "", ""]),
@@ -351,6 +355,7 @@ pub static LETTERS_ARABIC_V2: [LettersType; 80] = [
     ('\u{200D}', ["\u{200D}", "\u{200D}", "\u{200D}", "\u{200D}"]),
 ];
 
+/// Kurdish letters
 pub static LETTERS_KURDISH: [LettersType; 80] = [
     // ARABIC LETTER HAMZA
     ('\u{0621}', ["\u{FE80}", "", "", ""]),
@@ -514,8 +519,11 @@ pub static LETTERS_KURDISH: [LettersType; 80] = [
     ('\u{200D}', ["\u{200D}", "\u{200D}", "\u{200D}", "\u{200D}"]),
 ];
 
+/// The main letters type.
+///
+/// this struct is responsible for managing all the letters data.
 #[derive(Clone)]
-pub(crate) struct Letters(pub(crate) &'static [LettersType]);
+pub(crate) struct Letters(pub &'static [LettersType]);
 
 impl Default for Letters {
     fn default() -> Self {
