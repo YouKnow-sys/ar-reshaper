@@ -233,8 +233,9 @@ impl ArabicReshaper {
         S: AsRef<str>,
         L: AsRef<[S]>,
     {
-        let mut result = Vec::with_capacity(lines.as_ref().len());
-        for line in lines.as_ref() {
+        let lines = lines.as_ref();
+        let mut result = Vec::with_capacity(lines.len());
+        for line in lines {
             result.push(self.reshape(line.as_ref()));
         }
         result

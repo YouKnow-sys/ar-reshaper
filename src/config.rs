@@ -1,23 +1,6 @@
 use crate::{letters::LettersType, ligatures::*};
 
-#[cfg(feature = "bitflags")]
-bitflags::bitflags! {
-    /// Flags to enable some or all groups of ligatures
-    #[derive(Clone, Copy)]
-    pub struct LigaturesFlags: u8 {
-        const ENABLE_NO_LIGATURES = 0b000;
-        const ENABLE_SENTENCES_LIGATURES = 0b001;
-        const ENABLE_WORDS_LIGATURES = 0b010;
-        const ENABLE_LETTERS_LIGATURES = 0b100;
-        const ENABLE_ALL_LIGATURES =
-            Self::ENABLE_SENTENCES_LIGATURES.bits()
-            | Self::ENABLE_WORDS_LIGATURES.bits()
-            | Self::ENABLE_LETTERS_LIGATURES.bits();
-    }
-}
-
 /// Flags to enable some or all groups of ligatures
-#[cfg(not(feature = "bitflags"))]
 #[derive(Default, Clone, Copy)]
 pub struct LigaturesFlags {
     pub sentences_ligatures: bool,
@@ -25,7 +8,6 @@ pub struct LigaturesFlags {
     pub letters_ligatures: bool,
 }
 
-#[cfg(not(feature = "bitflags"))]
 impl LigaturesFlags {
     /// Enable all ligatures
     pub fn all() -> Self {
@@ -138,39 +120,17 @@ impl ReshaperConfig {
     pub fn new(language: Language, ligatures_flags: LigaturesFlags) -> Self {
         let mut ligatures = vec![false; LIGATURES.len()];
 
-        #[cfg(feature = "bitflags")]
-        if !ligatures_flags.contains(LigaturesFlags::ENABLE_NO_LIGATURES) {
-            for (flag, range) in [
-                (
-                    LigaturesFlags::ENABLE_SENTENCES_LIGATURES,
-                    SENTENCES_LIGATURES_RANGE,
-                ),
-                (
-                    LigaturesFlags::ENABLE_WORDS_LIGATURES,
-                    WORDS_LIGATURES_RANGE,
-                ),
-                (
-                    LigaturesFlags::ENABLE_LETTERS_LIGATURES,
-                    LETTERS_LIGATURES_RANGE,
-                ),
-            ] {
-                if ligatures_flags.contains(flag) {
-                    ligatures[range]
-                        .iter_mut()
-                        .for_each(|enabled| *enabled = true);
-                }
-            }
-        }
-
-        #[cfg(not(feature = "bitflags"))]
         if !ligatures_flags.is_none_enabled() {
+            let LigaturesFlags {
+                sentences_ligatures,
+                words_ligatures,
+                letters_ligatures,
+            } = ligatures_flags;
+
             for (enabled, range) in [
-                (
-                    ligatures_flags.sentences_ligatures,
-                    SENTENCES_LIGATURES_RANGE,
-                ),
-                (ligatures_flags.words_ligatures, WORDS_LIGATURES_RANGE),
-                (ligatures_flags.letters_ligatures, LETTERS_LIGATURES_RANGE),
+                (sentences_ligatures, SENTENCES_LIGATURES_RANGE),
+                (words_ligatures, WORDS_LIGATURES_RANGE),
+                (letters_ligatures, LETTERS_LIGATURES_RANGE),
             ] {
                 if enabled {
                     ligatures[range]
@@ -182,9 +142,6 @@ impl ReshaperConfig {
 
         Self {
             language,
-            #[cfg(feature = "bitflags")]
-            support_ligatures: !ligatures_flags.contains(LigaturesFlags::ENABLE_NO_LIGATURES),
-            #[cfg(not(feature = "bitflags"))]
             support_ligatures: !ligatures_flags.is_none_enabled(),
             ligatures,
             ..Default::default()
@@ -206,9 +163,6 @@ impl ReshaperConfig {
         let font = Face::parse(bytes, 0).map_err(|e| e.to_string())?;
 
         let mut config = Self {
-            #[cfg(feature = "bitflags")]
-            support_ligatures: !ligatures_flags.contains(LigaturesFlags::ENABLE_NO_LIGATURES),
-            #[cfg(not(feature = "bitflags"))]
             support_ligatures: !ligatures_flags.is_none_enabled(),
             ..Default::default()
         };
@@ -246,37 +200,17 @@ impl ReshaperConfig {
                 }
             };
 
-            #[cfg(feature = "bitflags")]
-            if !ligatures_flags.contains(LigaturesFlags::ENABLE_NO_LIGATURES) {
-                for (flag, range) in [
-                    (
-                        LigaturesFlags::ENABLE_SENTENCES_LIGATURES,
-                        SENTENCES_LIGATURES_RANGE,
-                    ),
-                    (
-                        LigaturesFlags::ENABLE_WORDS_LIGATURES,
-                        WORDS_LIGATURES_RANGE,
-                    ),
-                    (
-                        LigaturesFlags::ENABLE_LETTERS_LIGATURES,
-                        LETTERS_LIGATURES_RANGE,
-                    ),
-                ] {
-                    if ligatures_flags.contains(flag) {
-                        process_ligatures(&LIGATURES[range]);
-                    }
-                }
-            }
-
-            #[cfg(not(feature = "bitflags"))]
             if !ligatures_flags.is_none_enabled() {
+                let LigaturesFlags {
+                    sentences_ligatures,
+                    words_ligatures,
+                    letters_ligatures,
+                } = ligatures_flags;
+                
                 for (enabled, range) in [
-                    (
-                        ligatures_flags.sentences_ligatures,
-                        SENTENCES_LIGATURES_RANGE,
-                    ),
-                    (ligatures_flags.words_ligatures, WORDS_LIGATURES_RANGE),
-                    (ligatures_flags.letters_ligatures, LETTERS_LIGATURES_RANGE),
+                    (sentences_ligatures, SENTENCES_LIGATURES_RANGE),
+                    (words_ligatures, WORDS_LIGATURES_RANGE),
+                    (letters_ligatures, LETTERS_LIGATURES_RANGE),
                 ] {
                     if enabled {
                         process_ligatures(&LIGATURES[range]);

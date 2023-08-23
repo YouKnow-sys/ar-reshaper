@@ -45,9 +45,9 @@ for line in ["یک", "دو"].iter().reshape_default() {
 You can check **example** or **test** directory for more examples.
 
 # features:
+- **serde**: if this feature is enabled the `ReshaperConfig` can be serialized and de-serialized using serde.
 - **ttf-parser**: if you enable this feature the `ReshaperConfig` method will have another extra
 method named `from_font` that can be used to enable ligatures only if they exist in the input font.
-- **bitflags**: enable the use `bitflags` for the `LigaturesFlags`.
 
 ## Credits:
 this project is based on the awesome `python-arabic-reshaper`.
