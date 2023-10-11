@@ -1,6 +1,6 @@
 [package]
 name = "ar-reshaper"
-version = "1.0.0"
+version = "1.1.0"
 authors = ["Saeid Ghafari <saeid025@yahoo.com>"]
 edition = "2021"
 description = "Reconstruct Arabic sentences to be used in applications that don't support Arabic script."
@@ -14,8 +14,8 @@ categories = ["algorithms"]
 default = []
 
 [dependencies]
-serde = { version = "1.0.185", features = ["derive"], optional = true }
-ttf-parser = { version = "0.19.1", optional = true }
+serde = { version = "1.0", features = ["derive"], optional = true }
+ttf-parser = { version = "0.19", optional = true }
 
 [[example]]
 name = "reshape_line"
@@ -28,3 +28,7 @@ path = "examples/reshape_lines.rs"
 [[example]]
 name = "reshape_iterator"
 path = "examples/reshape_iterator.rs"
+
+[[example]]
+name = "custom_config"
+path = "examples/custom_config.rs"

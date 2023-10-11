@@ -22,7 +22,7 @@ println!("{}", reshape_line("سلام دنیا"));
 ```
 reshape a slice of strings
 ```rust
-use ar_reshaper::{ArabicReshaper}
+use ar_reshaper::ArabicReshaper;
 
 let reshaper = ArabicReshaper::default();
 
@@ -36,7 +36,7 @@ println!("{:#?}", reshaper.reshape_lines(lines));
 ```
 reshape strings on a iterator
 ```rust
-use ar_reshaper::ArabicReshaperExt;
+use ar_reshaper::prelude::*;
 
 for line in ["یک", "دو"].iter().reshape_default() {
     println!("{line}");
@@ -50,5 +50,4 @@ You can check **example** or **test** directory for more examples.
 method named `from_font` that can be used to enable ligatures only if they exist in the input font.
 
 ## Credits:
-this project is based on the awesome `python-arabic-reshaper`.
-you can check original project in [this](https://github.com/mpcabd/python-arabic-reshaper) repository
+this project is based on the awesome [`python-arabic-reshaper`](https://github.com/mpcabd/python-arabic-reshaper).

@@ -1,5 +1,4 @@
 //! Ligatures
-
 // Each ligature is of the format:
 //
 //   ('<key>', <replacement>)
@@ -29,6 +28,7 @@ pub(crate) const LETTERS_LIGATURES_RANGE: Range<usize> = 12..286;
 
 macro_rules! create_ligatures {
     ($ligatures_size:literal, $($id:ident => ($words:expr, [$isolated:literal, $initial:literal, $medial:literal, $final:literal]),)*) => {
+        /// All the Ligature names.
         #[allow(non_camel_case_types)]
         #[derive(Copy, Clone, Eq, PartialEq, Hash)]
         #[repr(usize)]
@@ -36,6 +36,8 @@ macro_rules! create_ligatures {
             $($id),*
         }
 
+
+        /// All the supported ligatures
         pub const LIGATURES: [(&[&'static str], [&'static str; 4]); $ligatures_size] = [
             $(($words, [$isolated, $initial, $medial, $final])),*
         ];

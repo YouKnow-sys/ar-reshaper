@@ -23,13 +23,13 @@
 //!
 //! let reshaper = ArabicReshaper::default();
 //!
-//! println!("{:#?}", reshaper.reshape_lines(&["سلام خوبی؟", "عالیم ممنون"]));
+//! println!("{:#?}", reshaper.reshape_lines(["سلام خوبی؟", "عالیم ممنون"]));
 //! // this will reconstruct the string and print  ["ﺳﻼﻡ ﺧﻮﺑﯽ؟", "ﻋﺎﻟﯿﻢ ﻣﻤﻨﻮﻥ"]
 //! ```
 //!
 //! You can also reshape strings on a iterator
 //! ```rust
-//! use ar_reshaper::ArabicReshaperExt;
+//! use ar_reshaper::prelude::*;
 //!
 //! for line in ["یک", "دو"].iter().reshape_default() {
 //!     println!("{line}");
@@ -38,26 +38,30 @@
 //!
 //! A rusty rewrite of [python-arabic-reshaper](https://github.com/mpcabd/python-arabic-reshaper)
 //! You can check the original repository for more information.
+#![forbid(unsafe_code)]
 
-pub use config::*;
-pub use iterator::*;
-pub use ligatures::LigatureNames;
+pub use config::{Language, ReshaperConfig};
 pub use reshaper::ArabicReshaper;
 
-mod config;
-mod iterator;
+pub mod config;
+pub mod iterator;
 pub mod letters;
 mod ligatures;
 mod reshaper;
 #[cfg(test)]
 mod tests;
 
+pub mod prelude {
+    pub use crate::config::*;
+    pub use crate::iterator::*;
+    pub use crate::ligatures::LigatureNames;
+    pub use crate::reshaper::ArabicReshaper;
+}
+
 /// Reshape the given text with the default [ArabicReshaper] configuration.\
 /// Keep in mind that if you want to reshape a large amount of lines its better
-/// to first create a [ArabicReshaper] and use the [`ArabicReshaper::reshape`]
-/// instead.
-///
-/// [`reshape`]: ArabicReshaper::reshape
+/// to first create a [ArabicReshaper] and then use the `reshape` or `reshape_lines`
+/// methods of it instead.
 pub fn reshape_line<S>(text: S) -> String
 where
     S: AsRef<str>,

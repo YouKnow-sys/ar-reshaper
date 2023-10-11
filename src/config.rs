@@ -1,4 +1,4 @@
-use crate::{letters::LettersType, ligatures::*};
+use crate::{letters::LettersType, ligatures::*, ArabicReshaper};
 
 /// Flags to enable some or all groups of ligatures
 #[derive(Default, Clone, Copy)]
@@ -51,15 +51,19 @@ pub enum Language {
 
 impl std::fmt::Display for Language {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{self:?}")
+        match self {
+            Language::Arabic => "Arabic",
+            Language::ArabicV2 => "ArabicV2",
+            Language::Kurdish => "Kurdish",
+            Language::Custom(_) => "Custom",
+        }
+        .fmt(f)
     }
 }
 
 /// The main Config struct for the [ArabicReshaper]
 ///
 /// You can change all kinds of settings about [ArabicReshaper] using this struct.
-///
-/// [ArabicReshaper]: crate::reshaper::ArabicReshaper
 #[derive(Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ReshaperConfig {
@@ -109,7 +113,6 @@ impl Default for ReshaperConfig {
             support_zwj: true,
             use_unshaped_instead_of_isolated: false,
             support_ligatures: true,
-            // this will enable all the ligatures
             ligatures,
         }
     }
@@ -146,6 +149,11 @@ impl ReshaperConfig {
             ligatures,
             ..Default::default()
         }
+    }
+
+    /// Create a new [ArabicReshaper] from the config.
+    pub fn to_reshaper(self) -> ArabicReshaper {
+        ArabicReshaper::new(self)
     }
 
     /// Create a new [ReshaperConfig] based on the input **true type font** font.\
@@ -206,7 +214,7 @@ impl ReshaperConfig {
                     words_ligatures,
                     letters_ligatures,
                 } = ligatures_flags;
-                
+
                 for (enabled, range) in [
                     (sentences_ligatures, SENTENCES_LIGATURES_RANGE),
                     (words_ligatures, WORDS_LIGATURES_RANGE),

@@ -1,4 +1,4 @@
-use ar_reshaper::ArabicReshaperExt;
+use ar_reshaper::prelude::*;
 
 fn main() {
     let lines = [
