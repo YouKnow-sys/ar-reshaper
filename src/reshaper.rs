@@ -1,21 +1,16 @@
 use std::{collections::HashMap, ops::RangeInclusive};
 
-use crate::{config::ReshaperConfig, letters::*, ligatures::*};
+use crate::{
+    config::ReshaperConfig,
+    form::LetterForm,
+    letters::{
+        letters_db::{TATWEEL, ZWJ},
+        *,
+    },
+    ligatures::*,
+};
 
-const NOT_SUPPORTED: i16 = -1;
-const EMPTY: (CharType, i16) = (CharType::Unsupported, NOT_SUPPORTED);
-
-#[derive(Copy, Clone)]
-enum CharType {
-    Supported(char),
-    Unsupported,
-}
-
-impl From<char> for CharType {
-    fn from(c: char) -> Self {
-        CharType::Supported(c)
-    }
-}
+const EMPTY: (char, LetterForm) = ('\0', LetterForm::Unsupported);
 
 static HARAKAT_RE: [RangeInclusive<char>; 9] = [
     '\u{0610}'..='\u{061a}',
@@ -51,11 +46,11 @@ impl ArabicReshaper {
     where
         S: AsRef<str>,
     {
-        if text.as_ref().is_empty() {
+        let text = text.as_ref();
+
+        if text.is_empty() {
             return String::new();
         }
-
-        let mut output = Vec::new();
 
         let ReshaperConfig {
             delete_harakat,
@@ -67,17 +62,18 @@ impl ArabicReshaper {
             ..
         } = self.config;
 
-        let mut position_harakat: HashMap<i16, Vec<char>> = HashMap::new();
-
         let isolated_form = match use_unshaped_instead_of_isolated {
-            true => UNSHAPED,
-            false => ISOLATED,
+            true => LetterForm::Unshaped,
+            false => LetterForm::Isolated,
         };
 
-        for letter in text.as_ref().chars() {
+        let mut output = Vec::new();
+        let mut position_harakat: HashMap<isize, Vec<char>> = HashMap::new();
+
+        for letter in text.chars() {
             if HARAKAT_RE.iter().any(|h| h.contains(&letter)) {
                 if !delete_harakat {
-                    let mut position = (output.len() - 1) as i16;
+                    let mut position = (output.len() - 1) as isize;
                     if shift_harakat_position {
                         position -= 1
                     }
@@ -92,28 +88,28 @@ impl ArabicReshaper {
                 }
             } else if letter == TATWEEL && delete_tatweel || letter == ZWJ && !support_zwj {
             } else if !self.letters.contains_key(&letter) {
-                output.push((letter, NOT_SUPPORTED))
+                output.push((letter, LetterForm::Unsupported))
             } else if output.is_empty() {
                 output.push((letter, isolated_form)) // first letter
             } else {
                 let previous_letter = output.last_mut().unwrap();
-                if (previous_letter.1 == NOT_SUPPORTED)
+                if (previous_letter.1 == LetterForm::Unsupported)
                     || (!self.letters.connects_with_letter_before(letter))
                     || (!self.letters.connects_with_letter_after(previous_letter.0))
-                    || (previous_letter.1 == FINAL
+                    || (previous_letter.1 == LetterForm::Final
                         && !self
                             .letters
                             .connects_with_letters_before_and_after(previous_letter.0))
                 {
                     output.push((letter, isolated_form));
                 } else if previous_letter.1 == isolated_form {
-                    *previous_letter = (previous_letter.0, INITIAL);
-                    output.push((letter, FINAL));
+                    *previous_letter = (previous_letter.0, LetterForm::Initial);
+                    output.push((letter, LetterForm::Final));
                 } else {
                     // Otherwise, we will change the previous letter to connect
                     // to the current letter
-                    *previous_letter = (previous_letter.0, MEDIAL);
-                    output.push((letter, FINAL));
+                    *previous_letter = (previous_letter.0, LetterForm::Medial);
+                    output.push((letter, LetterForm::Final));
                 }
             }
 
@@ -128,19 +124,9 @@ impl ArabicReshaper {
             output.pop();
         }
 
-        // this is needed because we can't have an empty char
-        // we can use &str instead for output type but then we have
-        // to change some other part of program to use &str instead
-        // of char... un-needed complexity
-        let mut output: Vec<(CharType, i16)> = output
-            .into_iter()
-            .map(|(c, i)| (CharType::from(c), i))
-            .collect();
-
         if support_ligatures {
             // Clean text from Harakat to be able to find ligatures
             let mut text: String = text
-                .as_ref()
                 .chars()
                 .filter(|c| !HARAKAT_RE.iter().any(|r| r.contains(c)))
                 .collect();
@@ -150,7 +136,9 @@ impl ArabicReshaper {
                 text = text.replace(TATWEEL, "")
             }
 
-            for ((tmatchs, forms), enabled) in LIGATURES.iter().zip(self.config.ligatures.iter()) {
+            for ((tmatchs, forms), enabled) in
+                LIGATURES.iter().zip(self.config.ligatures.vec.iter())
+            {
                 if !enabled {
                     continue;
                 }
@@ -163,7 +151,7 @@ impl ArabicReshaper {
 
                         let a_form = output[a].1;
                         let b_form = output[b - 1].1;
-                        let ligature_form: i16;
+                        let ligature_form: LetterForm;
 
                         // +-----------+----------+---------+---------+----------+
                         // | a   \   b | ISOLATED | INITIAL | MEDIAL  | FINAL    |
@@ -174,26 +162,23 @@ impl ArabicReshaper {
                         // | FINAL     | FINAL    | MEDIAL  | MEDIAL  | FINAL    |
                         // +-----------+----------+---------+---------+----------+
 
-                        if a_form == isolated_form || a_form == INITIAL {
-                            if b_form == isolated_form || b_form == FINAL {
-                                ligature_form = ISOLATED;
+                        if a_form == isolated_form || a_form == LetterForm::Initial {
+                            if b_form == isolated_form || b_form == LetterForm::Final {
+                                ligature_form = LetterForm::Isolated;
                             } else {
-                                ligature_form = INITIAL;
+                                ligature_form = LetterForm::Initial;
                             }
-                        } else if b_form == isolated_form || b_form == FINAL {
-                            ligature_form = FINAL;
+                        } else if b_form == isolated_form || b_form == LetterForm::Final {
+                            ligature_form = LetterForm::Final;
                         } else {
-                            ligature_form = MEDIAL;
+                            ligature_form = LetterForm::Medial;
                         }
 
-                        if forms[ligature_form as usize].is_empty() {
+                        if forms.get(ligature_form) == '\0' {
                             continue;
                         }
 
-                        output[a] = (
-                            forms[ligature_form as usize].chars().next().unwrap().into(),
-                            NOT_SUPPORTED,
-                        );
+                        output[a] = (forms.get(ligature_form), LetterForm::Unsupported);
 
                         for e in output[a + 1..b].iter_mut() {
                             *e = EMPTY;
@@ -203,24 +188,19 @@ impl ArabicReshaper {
             }
         }
 
-        let mut result = Vec::new();
+        let mut result = Vec::with_capacity(text.len());
 
         if !delete_harakat && position_harakat.contains_key(&-1) {
             result.extend(position_harakat[&-1].clone());
         }
 
-        for (i, o) in output.iter().enumerate() {
-            if let CharType::Supported(c) = o.0 {
-                if o.1 == NOT_SUPPORTED || o.1 == UNSHAPED {
-                    result.push(c);
-                } else {
-                    let unc = self.letters[&c][o.1 as usize];
-                    result.push(unc.chars().next().unwrap());
-                }
+        for (i, (letter, form)) in output.into_iter().enumerate() {
+            if letter != '\0' {
+                result.push(self.letters.get_form(letter, form))
             }
 
-            if !delete_harakat && position_harakat.contains_key(&(i as i16)) {
-                result.extend(position_harakat[&(i as i16)].clone());
+            if !delete_harakat && position_harakat.contains_key(&(i as isize)) {
+                result.extend(position_harakat[&(i as isize)].clone());
             }
         }
 
@@ -255,5 +235,11 @@ impl ArabicReshaper {
             // language changed, update letters
             self.letters.change_language(self.config.language);
         }
+    }
+}
+
+impl From<ReshaperConfig> for ArabicReshaper {
+    fn from(value: ReshaperConfig) -> Self {
+        ArabicReshaper::new(value)
     }
 }

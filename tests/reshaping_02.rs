@@ -1,4 +1,4 @@
-use crate::{ArabicReshaper, ReshaperConfig};
+use ar_reshaper::{ArabicReshaper, ReshaperConfig};
 
 #[test]
 fn default_persian_reshaping() {
@@ -53,70 +53,92 @@ fn default_reshaping() {
 
 #[test]
 fn zwj_reshaping() {
-    use crate::letters::{FINAL, INITIAL, ISOLATED, LETTERS_ARABIC, MEDIAL, ZWJ};
+    use ar_reshaper::letters::letters_db::{LETTERS_ARABIC, ZWJ};
 
     let reshaper = ArabicReshaper::default();
 
     const BEH: char = 'ب';
-    let beh_isolated =
-        LETTERS_ARABIC.iter().find(|(k, _)| k == &BEH).unwrap().1[ISOLATED as usize].to_owned();
-    let beh_initial =
-        LETTERS_ARABIC.iter().find(|(k, _)| k == &BEH).unwrap().1[INITIAL as usize].to_owned();
-    let beh_medial =
-        LETTERS_ARABIC.iter().find(|(k, _)| k == &BEH).unwrap().1[MEDIAL as usize].to_owned();
-    let beh_final =
-        LETTERS_ARABIC.iter().find(|(k, _)| k == &BEH).unwrap().1[FINAL as usize].to_owned();
+    let beh_isolated = LETTERS_ARABIC
+        .iter()
+        .find(|(k, _)| k == &BEH)
+        .unwrap()
+        .1
+        .isolated;
+    let beh_initial = LETTERS_ARABIC
+        .iter()
+        .find(|(k, _)| k == &BEH)
+        .unwrap()
+        .1
+        .initial;
+    let beh_medial = LETTERS_ARABIC
+        .iter()
+        .find(|(k, _)| k == &BEH)
+        .unwrap()
+        .1
+        .medial;
+    let beh_final = LETTERS_ARABIC
+        .iter()
+        .find(|(k, _)| k == &BEH)
+        .unwrap()
+        .1
+        .end;
 
     const ALEF: char = 'ا';
-    let alef_final =
-        LETTERS_ARABIC.iter().find(|(k, _)| k == &ALEF).unwrap().1[FINAL as usize].to_owned();
+    let alef_final = LETTERS_ARABIC
+        .iter()
+        .find(|(k, _)| k == &ALEF)
+        .unwrap()
+        .1
+        .end;
 
     const HAMZA: char = 'ء';
-    let hamza_isolated =
-        LETTERS_ARABIC.iter().find(|(k, _)| k == &HAMZA).unwrap().1[ISOLATED as usize].to_owned();
-
-    let zwj = ZWJ.to_string();
-    let alef = ALEF.to_string();
-    let beh = BEH.to_string();
-    let hamza = HAMZA.to_string();
+    let hamza_isolated = LETTERS_ARABIC
+        .iter()
+        .find(|(k, _)| k == &HAMZA)
+        .unwrap()
+        .1
+        .isolated;
 
     let cases = [
-        (beh.clone() + &hamza, beh_isolated.clone() + &hamza_isolated),
         (
-            zwj.clone() + &beh + &hamza,
-            beh_final.clone() + &hamza_isolated,
-        ),
-        (zwj.clone() + &beh, beh_final.clone()),
-        (beh.clone() + &zwj, beh_initial.clone()),
-        (zwj.clone() + &beh + &zwj, beh_medial),
-        (
-            beh.clone() + &zwj + &hamza,
-            beh_initial.clone() + &hamza_isolated,
-        ),
-        (beh.clone() + &alef, beh_initial.clone() + &alef_final),
-        (
-            beh.clone() + &zwj + &alef,
-            beh_initial.clone() + &alef_final,
+            format!("{BEH}{HAMZA}"),
+            format!("{beh_isolated}{hamza_isolated}"),
         ),
         (
-            beh.clone() + &zwj + &alef + &zwj,
-            beh_initial.clone() + &alef_final,
+            format!("{ZWJ}{BEH}{HAMZA}"),
+            format!("{beh_final}{hamza_isolated}"),
+        ),
+        (format!("{ZWJ}{BEH}"), beh_final.to_string()),
+        (format!("{BEH}{ZWJ}"), beh_initial.to_string()),
+        (format!("{ZWJ}{BEH}{ZWJ}"), beh_medial.to_string()),
+        (
+            format!("{BEH}{ZWJ}{HAMZA}"),
+            format!("{beh_initial}{hamza_isolated}"),
+        ),
+        (format!("{BEH}{ALEF}"), format!("{beh_initial}{alef_final}")),
+        (
+            format!("{BEH}{ZWJ}{ALEF}"),
+            format!("{beh_initial}{alef_final}"),
         ),
         (
-            beh.clone() + &alef + &beh,
-            beh_initial.clone() + &alef_final + &beh_isolated,
+            format!("{BEH}{ZWJ}{ALEF}{ZWJ}"),
+            format!("{beh_initial}{alef_final}"),
         ),
         (
-            beh.clone() + &zwj + &alef + &zwj + &beh,
-            beh_initial.clone() + &alef_final + &beh_final,
+            format!("{BEH}{ALEF}{BEH}"),
+            format!("{beh_initial}{alef_final}{beh_isolated}"),
         ),
         (
-            beh.clone() + &zwj + &hamza + &beh,
-            beh_initial.clone() + &hamza_isolated + &beh_isolated,
+            format!("{BEH}{ZWJ}{ALEF}{ZWJ}{BEH}"),
+            format!("{beh_initial}{alef_final}{beh_final}"),
         ),
         (
-            beh.clone() + &zwj + &hamza + &zwj + &beh,
-            beh_initial + &hamza_isolated + &beh_final,
+            format!("{BEH}{ZWJ}{HAMZA}{BEH}"),
+            format!("{beh_initial}{hamza_isolated}{beh_isolated}"),
+        ),
+        (
+            format!("{BEH}{ZWJ}{HAMZA}{ZWJ}{BEH}"),
+            format!("{beh_initial}{hamza_isolated}{beh_final}"),
         ),
     ];
 

@@ -22,6 +22,8 @@
 
 use std::ops::Range;
 
+use crate::form::Forms;
+
 pub(crate) const SENTENCES_LIGATURES_RANGE: Range<usize> = 0..3;
 pub(crate) const WORDS_LIGATURES_RANGE: Range<usize> = 3..12;
 pub(crate) const LETTERS_LIGATURES_RANGE: Range<usize> = 12..286;
@@ -38,8 +40,8 @@ macro_rules! create_ligatures {
 
 
         /// All the supported ligatures
-        pub const LIGATURES: [(&[&'static str], [&'static str; 4]); $ligatures_size] = [
-            $(($words, [$isolated, $initial, $medial, $final])),*
+        pub const LIGATURES: [(&[&'static str], Forms); $ligatures_size] = [
+            $(($words, Forms::new($isolated, $initial, $medial, $final))),*
         ];
 
     };
@@ -55,11 +57,11 @@ create_ligatures! [
             "\u{0627}\u{0644}\u{0631}\u{062D}\u{0645}\u{0646}\u{0020}",
             "\u{0627}\u{0644}\u{0631}\u{062D}\u{064A}\u{0645}",
         )],
-        ["\u{FDFD}", "", "", ""]
+        ['\u{FDFD}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_JALLAJALALOUHOU => (
         &["\u{062C}\u{0644}\u{0020}\u{062C}\u{0644}\u{0627}\u{0644}\u{0647}"],
-        ["\u{FDFB}", "", "", ""]
+        ['\u{FDFB}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_SALLALLAHOU_ALAYHE_WASALLAM => (
         &[concat!(
@@ -68,1147 +70,1147 @@ create_ligatures! [
             "\u{0639}\u{0644}\u{064A}\u{0647}\u{0020}",
             "\u{0648}\u{0633}\u{0644}\u{0645}",
         )],
-        ["\u{FDFA}", "", "", ""]
+        ['\u{FDFA}', '\0', '\0', '\0']
     ),
 
     ARABIC_LIGATURE_ALLAH => (
         &["\u{0627}\u{0644}\u{0644}\u{0647}"],
-        ["\u{FDF2}", "", "", ""]
+        ['\u{FDF2}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_AKBAR => (
         &["\u{0623}\u{0643}\u{0628}\u{0631}"],
-        ["\u{FDF3}", "", "", ""]
+        ['\u{FDF3}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_ALAYHE => (
         &["\u{0639}\u{0644}\u{064A}\u{0647}"],
-        ["\u{FDF7}", "", "", ""]
+        ['\u{FDF7}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_MOHAMMAD => (
         &["\u{0645}\u{062D}\u{0645}\u{062F}"],
-        ["\u{FDF4}", "", "", ""]
+        ['\u{FDF4}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_RASOUL => (
         &["\u{0631}\u{0633}\u{0648}\u{0644}"],
-        ["\u{FDF6}", "", "", ""]
+        ['\u{FDF6}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_SALAM => (
         &["\u{0635}\u{0644}\u{0639}\u{0645}"],
-        ["\u{FDF5}", "", "", ""]
+        ['\u{FDF5}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_SALLA => (
         &["\u{0635}\u{0644}\u{0649}"],
-        ["\u{FDF9}", "", "", ""]
+        ['\u{FDF9}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_WASALLAM => (
         &["\u{0648}\u{0633}\u{0644}\u{0645}"],
-        ["\u{FDF8}", "", "", ""]
+        ['\u{FDF8}', '\0', '\0', '\0']
     ),
     RIAL_SIGN => (
         &["\u{0631}[\u{06CC}\u{064A}]\u{0627}\u{0644}"],
-        ["\u{FDFC}", "", "", ""]
+        ['\u{FDFC}', '\0', '\0', '\0']
     ),
 
     ARABIC_LIGATURE_AIN_WITH_ALEF_MAKSURA => (
         &["\u{0639}\u{0649}"],
-        ["\u{FCF7}", "", "", "\u{FD13}"]
+        ['\u{FCF7}', '\0', '\0', '\u{FD13}']
     ),
     ARABIC_LIGATURE_AIN_WITH_JEEM => (
         &["\u{0639}\u{062C}"],
-        ["\u{FC29}", "\u{FCBA}", "", ""]
+        ['\u{FC29}', '\u{FCBA}', '\0', '\0']
     ),
     ARABIC_LIGATURE_AIN_WITH_JEEM_WITH_MEEM => (
         &["\u{0639}\u{062C}\u{0645}"],
-        ["", "\u{FDC4}", "", "\u{FD75}"]
+        ['\0', '\u{FDC4}', '\0', '\u{FD75}']
     ),
     ARABIC_LIGATURE_AIN_WITH_MEEM => (
         &["\u{0639}\u{0645}"],
-        ["\u{FC2A}", "\u{FCBB}", "", ""]
+        ['\u{FC2A}', '\u{FCBB}', '\0', '\0']
     ),
     ARABIC_LIGATURE_AIN_WITH_MEEM_WITH_ALEF_MAKSURA => (
         &["\u{0639}\u{0645}\u{0649}"],
-        ["", "", "", "\u{FD78}"]
+        ['\0', '\0', '\0', '\u{FD78}']
     ),
     ARABIC_LIGATURE_AIN_WITH_MEEM_WITH_MEEM => (
         &["\u{0639}\u{0645}\u{0645}"],
-        ["", "\u{FD77}", "", "\u{FD76}"]
+        ['\0', '\u{FD77}', '\0', '\u{FD76}']
     ),
     ARABIC_LIGATURE_AIN_WITH_MEEM_WITH_YEH => (
         &["\u{0639}\u{0645}\u{064A}"],
-        ["", "", "", "\u{FDB6}"]
+        ['\0', '\0', '\0', '\u{FDB6}']
     ),
     ARABIC_LIGATURE_AIN_WITH_YEH => (
         &["\u{0639}\u{064A}"],
-        ["\u{FCF8}", "", "", "\u{FD14}"]
+        ['\u{FCF8}', '\0', '\0', '\u{FD14}']
     ),
     ARABIC_LIGATURE_ALEF_MAKSURA_WITH_SUPERSCRIPT_ALEF => (
         &["\u{0649}\u{0670}"],
-        ["\u{FC5D}", "", "", "\u{FC90}"]
+        ['\u{FC5D}', '\0', '\0', '\u{FC90}']
     ),
     ARABIC_LIGATURE_ALEF_WITH_FATHATAN => (
         &["\u{0627}\u{064B}"],
-        ["\u{FD3D}", "", "", "\u{FD3C}"]
+        ['\u{FD3D}', '\0', '\0', '\u{FD3C}']
     ),
     ARABIC_LIGATURE_BEH_WITH_ALEF_MAKSURA => (
         &["\u{0628}\u{0649}"],
-        ["\u{FC09}", "", "", "\u{FC6E}"]
+        ['\u{FC09}', '\0', '\0', '\u{FC6E}']
     ),
     ARABIC_LIGATURE_BEH_WITH_HAH => (
         &["\u{0628}\u{062D}"],
-        ["\u{FC06}", "\u{FC9D}", "", ""]
+        ['\u{FC06}', '\u{FC9D}', '\0', '\0']
     ),
     ARABIC_LIGATURE_BEH_WITH_HAH_WITH_YEH => (
         &["\u{0628}\u{062D}\u{064A}"],
-        ["", "", "", "\u{FDC2}"]
+        ['\0', '\0', '\0', '\u{FDC2}']
     ),
     ARABIC_LIGATURE_BEH_WITH_HEH => (
         &["\u{0628}\u{0647}"],
-        ["", "\u{FCA0}", "\u{FCE2}", ""]
+        ['\0', '\u{FCA0}', '\u{FCE2}', '\0']
     ),
     ARABIC_LIGATURE_BEH_WITH_JEEM => (
         &["\u{0628}\u{062C}"],
-        ["\u{FC05}", "\u{FC9C}", "", ""]
+        ['\u{FC05}', '\u{FC9C}', '\0', '\0']
     ),
     ARABIC_LIGATURE_BEH_WITH_KHAH => (
         &["\u{0628}\u{062E}"],
-        ["\u{FC07}", "\u{FC9E}", "", ""]
+        ['\u{FC07}', '\u{FC9E}', '\0', '\0']
     ),
     ARABIC_LIGATURE_BEH_WITH_KHAH_WITH_YEH => (
         &["\u{0628}\u{062E}\u{064A}"],
-        ["", "", "", "\u{FD9E}"]
+        ['\0', '\0', '\0', '\u{FD9E}']
     ),
     ARABIC_LIGATURE_BEH_WITH_MEEM => (
         &["\u{0628}\u{0645}"],
-        ["\u{FC08}", "\u{FC9F}", "\u{FCE1}", "\u{FC6C}"]
+        ['\u{FC08}', '\u{FC9F}', '\u{FCE1}', '\u{FC6C}']
     ),
     ARABIC_LIGATURE_BEH_WITH_NOON => (
         &["\u{0628}\u{0646}"],
-        ["", "", "", "\u{FC6D}"]
+        ['\0', '\0', '\0', '\u{FC6D}']
     ),
     ARABIC_LIGATURE_BEH_WITH_REH => (
         &["\u{0628}\u{0631}"],
-        ["", "", "", "\u{FC6A}"]
+        ['\0', '\0', '\0', '\u{FC6A}']
     ),
     ARABIC_LIGATURE_BEH_WITH_YEH => (
         &["\u{0628}\u{064A}"],
-        ["\u{FC0A}", "", "", "\u{FC6F}"]
+        ['\u{FC0A}', '\0', '\0', '\u{FC6F}']
     ),
     ARABIC_LIGATURE_BEH_WITH_ZAIN => (
         &["\u{0628}\u{0632}"],
-        ["", "", "", "\u{FC6B}"]
+        ['\0', '\0', '\0', '\u{FC6B}']
     ),
     ARABIC_LIGATURE_DAD_WITH_ALEF_MAKSURA => (
         &["\u{0636}\u{0649}"],
-        ["\u{FD07}", "", "", "\u{FD23}"]
+        ['\u{FD07}', '\0', '\0', '\u{FD23}']
     ),
     ARABIC_LIGATURE_DAD_WITH_HAH => (
         &["\u{0636}\u{062D}"],
-        ["\u{FC23}", "\u{FCB5}", "", ""]
+        ['\u{FC23}', '\u{FCB5}', '\0', '\0']
     ),
     ARABIC_LIGATURE_DAD_WITH_HAH_WITH_ALEF_MAKSURA => (
         &["\u{0636}\u{062D}\u{0649}"],
-        ["", "", "", "\u{FD6E}"]
+        ['\0', '\0', '\0', '\u{FD6E}']
     ),
     ARABIC_LIGATURE_DAD_WITH_HAH_WITH_YEH => (
         &["\u{0636}\u{062D}\u{064A}"],
-        ["", "", "", "\u{FDAB}"]
+        ['\0', '\0', '\0', '\u{FDAB}']
     ),
     ARABIC_LIGATURE_DAD_WITH_JEEM => (
         &["\u{0636}\u{062C}"],
-        ["\u{FC22}", "\u{FCB4}", "", ""]
+        ['\u{FC22}', '\u{FCB4}', '\0', '\0']
     ),
     ARABIC_LIGATURE_DAD_WITH_KHAH => (
         &["\u{0636}\u{062E}"],
-        ["\u{FC24}", "\u{FCB6}", "", ""]
+        ['\u{FC24}', '\u{FCB6}', '\0', '\0']
     ),
     ARABIC_LIGATURE_DAD_WITH_KHAH_WITH_MEEM => (
         &["\u{0636}\u{062E}\u{0645}"],
-        ["", "\u{FD70}", "", "\u{FD6F}"]
+        ['\0', '\u{FD70}', '\0', '\u{FD6F}']
     ),
     ARABIC_LIGATURE_DAD_WITH_MEEM => (
         &["\u{0636}\u{0645}"],
-        ["\u{FC25}", "\u{FCB7}", "", ""]
+        ['\u{FC25}', '\u{FCB7}', '\0', '\0']
     ),
     ARABIC_LIGATURE_DAD_WITH_REH => (
         &["\u{0636}\u{0631}"],
-        ["\u{FD10}", "", "", "\u{FD2C}"]
+        ['\u{FD10}', '\0', '\0', '\u{FD2C}']
     ),
     ARABIC_LIGATURE_DAD_WITH_YEH => (
         &["\u{0636}\u{064A}"],
-        ["\u{FD08}", "", "", "\u{FD24}"]
+        ['\u{FD08}', '\0', '\0', '\u{FD24}']
     ),
     ARABIC_LIGATURE_FEH_WITH_ALEF_MAKSURA => (
         &["\u{0641}\u{0649}"],
-        ["\u{FC31}", "", "", "\u{FC7C}"]
+        ['\u{FC31}', '\0', '\0', '\u{FC7C}']
     ),
     ARABIC_LIGATURE_FEH_WITH_HAH => (
         &["\u{0641}\u{062D}"],
-        ["\u{FC2E}", "\u{FCBF}", "", ""]
+        ['\u{FC2E}', '\u{FCBF}', '\0', '\0']
     ),
     ARABIC_LIGATURE_FEH_WITH_JEEM => (
         &["\u{0641}\u{062C}"],
-        ["\u{FC2D}", "\u{FCBE}", "", ""]
+        ['\u{FC2D}', '\u{FCBE}', '\0', '\0']
     ),
     ARABIC_LIGATURE_FEH_WITH_KHAH => (
         &["\u{0641}\u{062E}"],
-        ["\u{FC2F}", "\u{FCC0}", "", ""]
+        ['\u{FC2F}', '\u{FCC0}', '\0', '\0']
     ),
     ARABIC_LIGATURE_FEH_WITH_KHAH_WITH_MEEM => (
         &["\u{0641}\u{062E}\u{0645}"],
-        ["", "\u{FD7D}", "", "\u{FD7C}"]
+        ['\0', '\u{FD7D}', '\0', '\u{FD7C}']
     ),
     ARABIC_LIGATURE_FEH_WITH_MEEM => (
         &["\u{0641}\u{0645}"],
-        ["\u{FC30}", "\u{FCC1}", "", ""]
+        ['\u{FC30}', '\u{FCC1}', '\0', '\0']
     ),
     ARABIC_LIGATURE_FEH_WITH_MEEM_WITH_YEH => (
         &["\u{0641}\u{0645}\u{064A}"],
-        ["", "", "", "\u{FDC1}"]
+        ['\0', '\0', '\0', '\u{FDC1}']
     ),
     ARABIC_LIGATURE_FEH_WITH_YEH => (
         &["\u{0641}\u{064A}"],
-        ["\u{FC32}", "", "", "\u{FC7D}"]
+        ['\u{FC32}', '\0', '\0', '\u{FC7D}']
     ),
     ARABIC_LIGATURE_GHAIN_WITH_ALEF_MAKSURA => (
         &["\u{063A}\u{0649}"],
-        ["\u{FCF9}", "", "", "\u{FD15}"]
+        ['\u{FCF9}', '\0', '\0', '\u{FD15}']
     ),
     ARABIC_LIGATURE_GHAIN_WITH_JEEM => (
         &["\u{063A}\u{062C}"],
-        ["\u{FC2B}", "\u{FCBC}", "", ""]
+        ['\u{FC2B}', '\u{FCBC}', '\0', '\0']
     ),
     ARABIC_LIGATURE_GHAIN_WITH_MEEM => (
         &["\u{063A}\u{0645}"],
-        ["\u{FC2C}", "\u{FCBD}", "", ""]
+        ['\u{FC2C}', '\u{FCBD}', '\0', '\0']
     ),
     ARABIC_LIGATURE_GHAIN_WITH_MEEM_WITH_ALEF_MAKSURA => (
         &["\u{063A}\u{0645}\u{0649}"],
-        ["", "", "", "\u{FD7B}"]
+        ['\0', '\0', '\0', '\u{FD7B}']
     ),
     ARABIC_LIGATURE_GHAIN_WITH_MEEM_WITH_MEEM => (
         &["\u{063A}\u{0645}\u{0645}"],
-        ["", "", "", "\u{FD79}"]
+        ['\0', '\0', '\0', '\u{FD79}']
     ),
     ARABIC_LIGATURE_GHAIN_WITH_MEEM_WITH_YEH => (
         &["\u{063A}\u{0645}\u{064A}"],
-        ["", "", "", "\u{FD7A}"]
+        ['\0', '\0', '\0', '\u{FD7A}']
     ),
     ARABIC_LIGATURE_GHAIN_WITH_YEH => (
         &["\u{063A}\u{064A}"],
-        ["\u{FCFA}", "", "", "\u{FD16}"]
+        ['\u{FCFA}', '\0', '\0', '\u{FD16}']
     ),
     ARABIC_LIGATURE_HAH_WITH_ALEF_MAKSURA => (
         &["\u{062D}\u{0649}"],
-        ["\u{FCFF}", "", "", "\u{FD1B}"]
+        ['\u{FCFF}', '\0', '\0', '\u{FD1B}']
     ),
     ARABIC_LIGATURE_HAH_WITH_JEEM => (
         &["\u{062D}\u{062C}"],
-        ["\u{FC17}", "\u{FCA9}", "", ""]
+        ['\u{FC17}', '\u{FCA9}', '\0', '\0']
     ),
     ARABIC_LIGATURE_HAH_WITH_JEEM_WITH_YEH => (
         &["\u{062D}\u{062C}\u{064A}"],
-        ["", "", "", "\u{FDBF}"]
+        ['\0', '\0', '\0', '\u{FDBF}']
     ),
     ARABIC_LIGATURE_HAH_WITH_MEEM => (
         &["\u{062D}\u{0645}"],
-        ["\u{FC18}", "\u{FCAA}", "", ""]
+        ['\u{FC18}', '\u{FCAA}', '\0', '\0']
     ),
     ARABIC_LIGATURE_HAH_WITH_MEEM_WITH_ALEF_MAKSURA => (
         &["\u{062D}\u{0645}\u{0649}"],
-        ["", "", "", "\u{FD5B}"]
+        ['\0', '\0', '\0', '\u{FD5B}']
     ),
     ARABIC_LIGATURE_HAH_WITH_MEEM_WITH_YEH => (
         &["\u{062D}\u{0645}\u{064A}"],
-        ["", "", "", "\u{FD5A}"]
+        ['\0', '\0', '\0', '\u{FD5A}']
     ),
     ARABIC_LIGATURE_HAH_WITH_YEH => (
         &["\u{062D}\u{064A}"],
-        ["\u{FD00}", "", "", "\u{FD1C}"]
+        ['\u{FD00}', '\0', '\0', '\u{FD1C}']
     ),
     ARABIC_LIGATURE_HEH_WITH_ALEF_MAKSURA => (
         &["\u{0647}\u{0649}"],
-        ["\u{FC53}", "", "", ""]
+        ['\u{FC53}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_HEH_WITH_JEEM => (
         &["\u{0647}\u{062C}"],
-        ["\u{FC51}", "\u{FCD7}", "", ""]
+        ['\u{FC51}', '\u{FCD7}', '\0', '\0']
     ),
     ARABIC_LIGATURE_HEH_WITH_MEEM => (
         &["\u{0647}\u{0645}"],
-        ["\u{FC52}", "\u{FCD8}", "", ""]
+        ['\u{FC52}', '\u{FCD8}', '\0', '\0']
     ),
     ARABIC_LIGATURE_HEH_WITH_MEEM_WITH_JEEM => (
         &["\u{0647}\u{0645}\u{062C}"],
-        ["", "\u{FD93}", "", ""]
+        ['\0', '\u{FD93}', '\0', '\0']
     ),
     ARABIC_LIGATURE_HEH_WITH_MEEM_WITH_MEEM => (
         &["\u{0647}\u{0645}\u{0645}"],
-        ["", "\u{FD94}", "", ""]
+        ['\0', '\u{FD94}', '\0', '\0']
     ),
     ARABIC_LIGATURE_HEH_WITH_SUPERSCRIPT_ALEF => (
         &["\u{0647}\u{0670}"],
-        ["", "\u{FCD9}", "", ""]
+        ['\0', '\u{FCD9}', '\0', '\0']
     ),
     ARABIC_LIGATURE_HEH_WITH_YEH => (
         &["\u{0647}\u{064A}"],
-        ["\u{FC54}", "", "", ""]
+        ['\u{FC54}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_JEEM_WITH_ALEF_MAKSURA => (
         &["\u{062C}\u{0649}"],
-        ["\u{FD01}", "", "", "\u{FD1D}"]
+        ['\u{FD01}', '\0', '\0', '\u{FD1D}']
     ),
     ARABIC_LIGATURE_JEEM_WITH_HAH => (
         &["\u{062C}\u{062D}"],
-        ["\u{FC15}", "\u{FCA7}", "", ""]
+        ['\u{FC15}', '\u{FCA7}', '\0', '\0']
     ),
     ARABIC_LIGATURE_JEEM_WITH_HAH_WITH_ALEF_MAKSURA => (
         &["\u{062C}\u{062D}\u{0649}"],
-        ["", "", "", "\u{FDA6}"]
+        ['\0', '\0', '\0', '\u{FDA6}']
     ),
     ARABIC_LIGATURE_JEEM_WITH_HAH_WITH_YEH => (
         &["\u{062C}\u{062D}\u{064A}"],
-        ["", "", "", "\u{FDBE}"]
+        ['\0', '\0', '\0', '\u{FDBE}']
     ),
     ARABIC_LIGATURE_JEEM_WITH_MEEM => (
         &["\u{062C}\u{0645}"],
-        ["\u{FC16}", "\u{FCA8}", "", ""]
+        ['\u{FC16}', '\u{FCA8}', '\0', '\0']
     ),
     ARABIC_LIGATURE_JEEM_WITH_MEEM_WITH_ALEF_MAKSURA => (
         &["\u{062C}\u{0645}\u{0649}"],
-        ["", "", "", "\u{FDA7}"]
+        ['\0', '\0', '\0', '\u{FDA7}']
     ),
     ARABIC_LIGATURE_JEEM_WITH_MEEM_WITH_HAH => (
         &["\u{062C}\u{0645}\u{062D}"],
-        ["", "\u{FD59}", "", "\u{FD58}"]
+        ['\0', '\u{FD59}', '\0', '\u{FD58}']
     ),
     ARABIC_LIGATURE_JEEM_WITH_MEEM_WITH_YEH => (
         &["\u{062C}\u{0645}\u{064A}"],
-        ["", "", "", "\u{FDA5}"]
+        ['\0', '\0', '\0', '\u{FDA5}']
     ),
     ARABIC_LIGATURE_JEEM_WITH_YEH => (
         &["\u{062C}\u{064A}"],
-        ["\u{FD02}", "", "", "\u{FD1E}"]
+        ['\u{FD02}', '\0', '\0', '\u{FD1E}']
     ),
     ARABIC_LIGATURE_KAF_WITH_ALEF => (
         &["\u{0643}\u{0627}"],
-        ["\u{FC37}", "", "", "\u{FC80}"]
+        ['\u{FC37}', '\0', '\0', '\u{FC80}']
     ),
     ARABIC_LIGATURE_KAF_WITH_ALEF_MAKSURA => (
         &["\u{0643}\u{0649}"],
-        ["\u{FC3D}", "", "", "\u{FC83}"]
+        ['\u{FC3D}', '\0', '\0', '\u{FC83}']
     ),
     ARABIC_LIGATURE_KAF_WITH_HAH => (
         &["\u{0643}\u{062D}"],
-        ["\u{FC39}", "\u{FCC5}", "", ""]
+        ['\u{FC39}', '\u{FCC5}', '\0', '\0']
     ),
     ARABIC_LIGATURE_KAF_WITH_JEEM => (
         &["\u{0643}\u{062C}"],
-        ["\u{FC38}", "\u{FCC4}", "", ""]
+        ['\u{FC38}', '\u{FCC4}', '\0', '\0']
     ),
     ARABIC_LIGATURE_KAF_WITH_KHAH => (
         &["\u{0643}\u{062E}"],
-        ["\u{FC3A}", "\u{FCC6}", "", ""]
+        ['\u{FC3A}', '\u{FCC6}', '\0', '\0']
     ),
     ARABIC_LIGATURE_KAF_WITH_LAM => (
         &["\u{0643}\u{0644}"],
-        ["\u{FC3B}", "\u{FCC7}", "\u{FCEB}", "\u{FC81}"]
+        ['\u{FC3B}', '\u{FCC7}', '\u{FCEB}', '\u{FC81}']
     ),
     ARABIC_LIGATURE_KAF_WITH_MEEM => (
         &["\u{0643}\u{0645}"],
-        ["\u{FC3C}", "\u{FCC8}", "\u{FCEC}", "\u{FC82}"]
+        ['\u{FC3C}', '\u{FCC8}', '\u{FCEC}', '\u{FC82}']
     ),
     ARABIC_LIGATURE_KAF_WITH_MEEM_WITH_MEEM => (
         &["\u{0643}\u{0645}\u{0645}"],
-        ["", "\u{FDC3}", "", "\u{FDBB}"]
+        ['\0', '\u{FDC3}', '\0', '\u{FDBB}']
     ),
     ARABIC_LIGATURE_KAF_WITH_MEEM_WITH_YEH => (
         &["\u{0643}\u{0645}\u{064A}"],
-        ["", "", "", "\u{FDB7}"]
+        ['\0', '\0', '\0', '\u{FDB7}']
     ),
     ARABIC_LIGATURE_KAF_WITH_YEH => (
         &["\u{0643}\u{064A}"],
-        ["\u{FC3E}", "", "", "\u{FC84}"]
+        ['\u{FC3E}', '\0', '\0', '\u{FC84}']
     ),
     ARABIC_LIGATURE_KHAH_WITH_ALEF_MAKSURA => (
         &["\u{062E}\u{0649}"],
-        ["\u{FD03}", "", "", "\u{FD1F}"]
+        ['\u{FD03}', '\0', '\0', '\u{FD1F}']
     ),
     ARABIC_LIGATURE_KHAH_WITH_HAH => (
         &["\u{062E}\u{062D}"],
-        ["\u{FC1A}", "", "", ""]
+        ['\u{FC1A}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_KHAH_WITH_JEEM => (
         &["\u{062E}\u{062C}"],
-        ["\u{FC19}", "\u{FCAB}", "", ""]
+        ['\u{FC19}', '\u{FCAB}', '\0', '\0']
     ),
     ARABIC_LIGATURE_KHAH_WITH_MEEM => (
         &["\u{062E}\u{0645}"],
-        ["\u{FC1B}", "\u{FCAC}", "", ""]
+        ['\u{FC1B}', '\u{FCAC}', '\0', '\0']
     ),
     ARABIC_LIGATURE_KHAH_WITH_YEH => (
         &["\u{062E}\u{064A}"],
-        ["\u{FD04}", "", "", "\u{FD20}"]
+        ['\u{FD04}', '\0', '\0', '\u{FD20}']
     ),
     ARABIC_LIGATURE_LAM_WITH_ALEF => (
         &["\u{0644}\u{0627}"],
-        ["\u{FEFB}", "", "", "\u{FEFC}"]
+        ['\u{FEFB}', '\0', '\0', '\u{FEFC}']
     ),
     ARABIC_LIGATURE_LAM_WITH_ALEF_MAKSURA => (
         &["\u{0644}\u{0649}"],
-        ["\u{FC43}", "", "", "\u{FC86}"]
+        ['\u{FC43}', '\0', '\0', '\u{FC86}']
     ),
     ARABIC_LIGATURE_LAM_WITH_ALEF_WITH_HAMZA_ABOVE => (
         &["\u{0644}\u{0623}"],
-        ["\u{FEF7}", "", "", "\u{FEF8}"]
+        ['\u{FEF7}', '\0', '\0', '\u{FEF8}']
     ),
     ARABIC_LIGATURE_LAM_WITH_ALEF_WITH_HAMZA_BELOW => (
         &["\u{0644}\u{0625}"],
-        ["\u{FEF9}", "", "", "\u{FEFA}"]
+        ['\u{FEF9}', '\0', '\0', '\u{FEFA}']
     ),
     ARABIC_LIGATURE_LAM_WITH_ALEF_WITH_MADDA_ABOVE => (
         &["\u{0644}\u{0622}"],
-        ["\u{FEF5}", "", "", "\u{FEF6}"]
+        ['\u{FEF5}', '\0', '\0', '\u{FEF6}']
     ),
     ARABIC_LIGATURE_LAM_WITH_HAH => (
         &["\u{0644}\u{062D}"],
-        ["\u{FC40}", "\u{FCCA}", "", ""]
+        ['\u{FC40}', '\u{FCCA}', '\0', '\0']
     ),
     ARABIC_LIGATURE_LAM_WITH_HAH_WITH_ALEF_MAKSURA => (
         &["\u{0644}\u{062D}\u{0649}"],
-        ["", "", "", "\u{FD82}"]
+        ['\0', '\0', '\0', '\u{FD82}']
     ),
     ARABIC_LIGATURE_LAM_WITH_HAH_WITH_MEEM => (
         &["\u{0644}\u{062D}\u{0645}"],
-        ["", "\u{FDB5}", "", "\u{FD80}"]
+        ['\0', '\u{FDB5}', '\0', '\u{FD80}']
     ),
     ARABIC_LIGATURE_LAM_WITH_HAH_WITH_YEH => (
         &["\u{0644}\u{062D}\u{064A}"],
-        ["", "", "", "\u{FD81}"]
+        ['\0', '\0', '\0', '\u{FD81}']
     ),
     ARABIC_LIGATURE_LAM_WITH_HEH => (
         &["\u{0644}\u{0647}"],
-        ["", "\u{FCCD}", "", ""]
+        ['\0', '\u{FCCD}', '\0', '\0']
     ),
     ARABIC_LIGATURE_LAM_WITH_JEEM => (
         &["\u{0644}\u{062C}"],
-        ["\u{FC3F}", "\u{FCC9}", "", ""]
+        ['\u{FC3F}', '\u{FCC9}', '\0', '\0']
     ),
     ARABIC_LIGATURE_LAM_WITH_JEEM_WITH_JEEM => (
         &["\u{0644}\u{062C}\u{062C}"],
-        ["", "\u{FD83}", "", "\u{FD84}"]
+        ['\0', '\u{FD83}', '\0', '\u{FD84}']
     ),
     ARABIC_LIGATURE_LAM_WITH_JEEM_WITH_MEEM => (
         &["\u{0644}\u{062C}\u{0645}"],
-        ["", "\u{FDBA}", "", "\u{FDBC}"]
+        ['\0', '\u{FDBA}', '\0', '\u{FDBC}']
     ),
     ARABIC_LIGATURE_LAM_WITH_JEEM_WITH_YEH => (
         &["\u{0644}\u{062C}\u{064A}"],
-        ["", "", "", "\u{FDAC}"]
+        ['\0', '\0', '\0', '\u{FDAC}']
     ),
     ARABIC_LIGATURE_LAM_WITH_KHAH => (
         &["\u{0644}\u{062E}"],
-        ["\u{FC41}", "\u{FCCB}", "", ""]
+        ['\u{FC41}', '\u{FCCB}', '\0', '\0']
     ),
     ARABIC_LIGATURE_LAM_WITH_KHAH_WITH_MEEM => (
         &["\u{0644}\u{062E}\u{0645}"],
-        ["", "\u{FD86}", "", "\u{FD85}"]
+        ['\0', '\u{FD86}', '\0', '\u{FD85}']
     ),
     ARABIC_LIGATURE_LAM_WITH_MEEM => (
         &["\u{0644}\u{0645}"],
-        ["\u{FC42}", "\u{FCCC}", "\u{FCED}", "\u{FC85}"]
+        ['\u{FC42}', '\u{FCCC}', '\u{FCED}', '\u{FC85}']
     ),
     ARABIC_LIGATURE_LAM_WITH_MEEM_WITH_HAH => (
         &["\u{0644}\u{0645}\u{062D}"],
-        ["", "\u{FD88}", "", "\u{FD87}"]
+        ['\0', '\u{FD88}', '\0', '\u{FD87}']
     ),
     ARABIC_LIGATURE_LAM_WITH_MEEM_WITH_YEH => (
         &["\u{0644}\u{0645}\u{064A}"],
-        ["", "", "", "\u{FDAD}"]
+        ['\0', '\0', '\0', '\u{FDAD}']
     ),
     ARABIC_LIGATURE_LAM_WITH_YEH => (
         &["\u{0644}\u{064A}"],
-        ["\u{FC44}", "", "", "\u{FC87}"]
+        ['\u{FC44}', '\0', '\0', '\u{FC87}']
     ),
     ARABIC_LIGATURE_MEEM_WITH_ALEF => (
         &["\u{0645}\u{0627}"],
-        ["", "", "", "\u{FC88}"]
+        ['\0', '\0', '\0', '\u{FC88}']
     ),
     ARABIC_LIGATURE_MEEM_WITH_ALEF_MAKSURA => (
         &["\u{0645}\u{0649}"],
-        ["\u{FC49}", "", "", ""]
+        ['\u{FC49}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_MEEM_WITH_HAH => (
         &["\u{0645}\u{062D}"],
-        ["\u{FC46}", "\u{FCCF}", "", ""]
+        ['\u{FC46}', '\u{FCCF}', '\0', '\0']
     ),
     ARABIC_LIGATURE_MEEM_WITH_HAH_WITH_JEEM => (
         &["\u{0645}\u{062D}\u{062C}"],
-        ["", "\u{FD89}", "", ""]
+        ['\0', '\u{FD89}', '\0', '\0']
     ),
     ARABIC_LIGATURE_MEEM_WITH_HAH_WITH_MEEM => (
         &["\u{0645}\u{062D}\u{0645}"],
-        ["", "\u{FD8A}", "", ""]
+        ['\0', '\u{FD8A}', '\0', '\0']
     ),
     ARABIC_LIGATURE_MEEM_WITH_HAH_WITH_YEH => (
         &["\u{0645}\u{062D}\u{064A}"],
-        ["", "", "", "\u{FD8B}"]
+        ['\0', '\0', '\0', '\u{FD8B}']
     ),
     ARABIC_LIGATURE_MEEM_WITH_JEEM => (
         &["\u{0645}\u{062C}"],
-        ["\u{FC45}", "\u{FCCE}", "", ""]
+        ['\u{FC45}', '\u{FCCE}', '\0', '\0']
     ),
     ARABIC_LIGATURE_MEEM_WITH_JEEM_WITH_HAH => (
         &["\u{0645}\u{062C}\u{062D}"],
-        ["", "\u{FD8C}", "", ""]
+        ['\0', '\u{FD8C}', '\0', '\0']
     ),
     ARABIC_LIGATURE_MEEM_WITH_JEEM_WITH_KHAH => (
         &["\u{0645}\u{062C}\u{062E}"],
-        ["", "\u{FD92}", "", ""]
+        ['\0', '\u{FD92}', '\0', '\0']
     ),
     ARABIC_LIGATURE_MEEM_WITH_JEEM_WITH_MEEM => (
         &["\u{0645}\u{062C}\u{0645}"],
-        ["", "\u{FD8D}", "", ""]
+        ['\0', '\u{FD8D}', '\0', '\0']
     ),
     ARABIC_LIGATURE_MEEM_WITH_JEEM_WITH_YEH => (
         &["\u{0645}\u{062C}\u{064A}"],
-        ["", "", "", "\u{FDC0}"]
+        ['\0', '\0', '\0', '\u{FDC0}']
     ),
     ARABIC_LIGATURE_MEEM_WITH_KHAH => (
         &["\u{0645}\u{062E}"],
-        ["\u{FC47}", "\u{FCD0}", "", ""]
+        ['\u{FC47}', '\u{FCD0}', '\0', '\0']
     ),
     ARABIC_LIGATURE_MEEM_WITH_KHAH_WITH_JEEM => (
         &["\u{0645}\u{062E}\u{062C}"],
-        ["", "\u{FD8E}", "", ""]
+        ['\0', '\u{FD8E}', '\0', '\0']
     ),
     ARABIC_LIGATURE_MEEM_WITH_KHAH_WITH_MEEM => (
         &["\u{0645}\u{062E}\u{0645}"],
-        ["", "\u{FD8F}", "", ""]
+        ['\0', '\u{FD8F}', '\0', '\0']
     ),
     ARABIC_LIGATURE_MEEM_WITH_KHAH_WITH_YEH => (
         &["\u{0645}\u{062E}\u{064A}"],
-        ["", "", "", "\u{FDB9}"]
+        ['\0', '\0', '\0', '\u{FDB9}']
     ),
     ARABIC_LIGATURE_MEEM_WITH_MEEM => (
         &["\u{0645}\u{0645}"],
-        ["\u{FC48}", "\u{FCD1}", "", "\u{FC89}"]
+        ['\u{FC48}', '\u{FCD1}', '\0', '\u{FC89}']
     ),
     ARABIC_LIGATURE_MEEM_WITH_MEEM_WITH_YEH => (
         &["\u{0645}\u{0645}\u{064A}"],
-        ["", "", "", "\u{FDB1}"]
+        ['\0', '\0', '\0', '\u{FDB1}']
     ),
     ARABIC_LIGATURE_MEEM_WITH_YEH => (
         &["\u{0645}\u{064A}"],
-        ["\u{FC4A}", "", "", ""]
+        ['\u{FC4A}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_NOON_WITH_ALEF_MAKSURA => (
         &["\u{0646}\u{0649}"],
-        ["\u{FC4F}", "", "", "\u{FC8E}"]
+        ['\u{FC4F}', '\0', '\0', '\u{FC8E}']
     ),
     ARABIC_LIGATURE_NOON_WITH_HAH => (
         &["\u{0646}\u{062D}"],
-        ["\u{FC4C}", "\u{FCD3}", "", ""]
+        ['\u{FC4C}', '\u{FCD3}', '\0', '\0']
     ),
     ARABIC_LIGATURE_NOON_WITH_HAH_WITH_ALEF_MAKSURA => (
         &["\u{0646}\u{062D}\u{0649}"],
-        ["", "", "", "\u{FD96}"]
+        ['\0', '\0', '\0', '\u{FD96}']
     ),
     ARABIC_LIGATURE_NOON_WITH_HAH_WITH_MEEM => (
         &["\u{0646}\u{062D}\u{0645}"],
-        ["", "\u{FD95}", "", ""]
+        ['\0', '\u{FD95}', '\0', '\0']
     ),
     ARABIC_LIGATURE_NOON_WITH_HAH_WITH_YEH => (
         &["\u{0646}\u{062D}\u{064A}"],
-        ["", "", "", "\u{FDB3}"]
+        ['\0', '\0', '\0', '\u{FDB3}']
     ),
     ARABIC_LIGATURE_NOON_WITH_HEH => (
         &["\u{0646}\u{0647}"],
-        ["", "\u{FCD6}", "\u{FCEF}", ""]
+        ['\0', '\u{FCD6}', '\u{FCEF}', '\0']
     ),
     ARABIC_LIGATURE_NOON_WITH_JEEM => (
         &["\u{0646}\u{062C}"],
-        ["\u{FC4B}", "\u{FCD2}", "", ""]
+        ['\u{FC4B}', '\u{FCD2}', '\0', '\0']
     ),
     ARABIC_LIGATURE_NOON_WITH_JEEM_WITH_ALEF_MAKSURA => (
         &["\u{0646}\u{062C}\u{0649}"],
-        ["", "", "", "\u{FD99}"]
+        ['\0', '\0', '\0', '\u{FD99}']
     ),
     ARABIC_LIGATURE_NOON_WITH_JEEM_WITH_HAH => (
         &["\u{0646}\u{062C}\u{062D}"],
-        ["", "\u{FDB8}", "", "\u{FDBD}"]
+        ['\0', '\u{FDB8}', '\0', '\u{FDBD}']
     ),
     ARABIC_LIGATURE_NOON_WITH_JEEM_WITH_MEEM => (
         &["\u{0646}\u{062C}\u{0645}"],
-        ["", "\u{FD98}", "", "\u{FD97}"]
+        ['\0', '\u{FD98}', '\0', '\u{FD97}']
     ),
     ARABIC_LIGATURE_NOON_WITH_JEEM_WITH_YEH => (
         &["\u{0646}\u{062C}\u{064A}"],
-        ["", "", "", "\u{FDC7}"]
+        ['\0', '\0', '\0', '\u{FDC7}']
     ),
     ARABIC_LIGATURE_NOON_WITH_KHAH => (
         &["\u{0646}\u{062E}"],
-        ["\u{FC4D}", "\u{FCD4}", "", ""]
+        ['\u{FC4D}', '\u{FCD4}', '\0', '\0']
     ),
     ARABIC_LIGATURE_NOON_WITH_MEEM => (
         &["\u{0646}\u{0645}"],
-        ["\u{FC4E}", "\u{FCD5}", "\u{FCEE}", "\u{FC8C}"]
+        ['\u{FC4E}', '\u{FCD5}', '\u{FCEE}', '\u{FC8C}']
     ),
     ARABIC_LIGATURE_NOON_WITH_MEEM_WITH_ALEF_MAKSURA => (
         &["\u{0646}\u{0645}\u{0649}"],
-        ["", "", "", "\u{FD9B}"]
+        ['\0', '\0', '\0', '\u{FD9B}']
     ),
     ARABIC_LIGATURE_NOON_WITH_MEEM_WITH_YEH => (
         &["\u{0646}\u{0645}\u{064A}"],
-        ["", "", "", "\u{FD9A}"]
+        ['\0', '\0', '\0', '\u{FD9A}']
     ),
     ARABIC_LIGATURE_NOON_WITH_NOON => (
         &["\u{0646}\u{0646}"],
-        ["", "", "", "\u{FC8D}"]
+        ['\0', '\0', '\0', '\u{FC8D}']
     ),
     ARABIC_LIGATURE_NOON_WITH_REH => (
         &["\u{0646}\u{0631}"],
-        ["", "", "", "\u{FC8A}"]
+        ['\0', '\0', '\0', '\u{FC8A}']
     ),
     ARABIC_LIGATURE_NOON_WITH_YEH => (
         &["\u{0646}\u{064A}"],
-        ["\u{FC50}", "", "", "\u{FC8F}"]
+        ['\u{FC50}', '\0', '\0', '\u{FC8F}']
     ),
     ARABIC_LIGATURE_NOON_WITH_ZAIN => (
         &["\u{0646}\u{0632}"],
-        ["", "", "", "\u{FC8B}"]
+        ['\0', '\0', '\0', '\u{FC8B}']
     ),
     ARABIC_LIGATURE_QAF_WITH_ALEF_MAKSURA => (
         &["\u{0642}\u{0649}"],
-        ["\u{FC35}", "", "", "\u{FC7E}"]
+        ['\u{FC35}', '\0', '\0', '\u{FC7E}']
     ),
     ARABIC_LIGATURE_QAF_WITH_HAH => (
         &["\u{0642}\u{062D}"],
-        ["\u{FC33}", "\u{FCC2}", "", ""]
+        ['\u{FC33}', '\u{FCC2}', '\0', '\0']
     ),
     ARABIC_LIGATURE_QAF_WITH_MEEM => (
         &["\u{0642}\u{0645}"],
-        ["\u{FC34}", "\u{FCC3}", "", ""]
+        ['\u{FC34}', '\u{FCC3}', '\0', '\0']
     ),
     ARABIC_LIGATURE_QAF_WITH_MEEM_WITH_HAH => (
         &["\u{0642}\u{0645}\u{062D}"],
-        ["", "\u{FDB4}", "", "\u{FD7E}"]
+        ['\0', '\u{FDB4}', '\0', '\u{FD7E}']
     ),
     ARABIC_LIGATURE_QAF_WITH_MEEM_WITH_MEEM => (
         &["\u{0642}\u{0645}\u{0645}"],
-        ["", "", "", "\u{FD7F}"]
+        ['\0', '\0', '\0', '\u{FD7F}']
     ),
     ARABIC_LIGATURE_QAF_WITH_MEEM_WITH_YEH => (
         &["\u{0642}\u{0645}\u{064A}"],
-        ["", "", "", "\u{FDB2}"]
+        ['\0', '\0', '\0', '\u{FDB2}']
     ),
     ARABIC_LIGATURE_QAF_WITH_YEH => (
         &["\u{0642}\u{064A}"],
-        ["\u{FC36}", "", "", "\u{FC7F}"]
+        ['\u{FC36}', '\0', '\0', '\u{FC7F}']
     ),
     ARABIC_LIGATURE_QALA_USED_AS_KORANIC_STOP_SIGN => (
         &["\u{0642}\u{0644}\u{06D2}"],
-        ["\u{FDF1}", "", "", ""]
+        ['\u{FDF1}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_REH_WITH_SUPERSCRIPT_ALEF => (
         &["\u{0631}\u{0670}"],
-        ["\u{FC5C}", "", "", ""]
+        ['\u{FC5C}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_SAD_WITH_ALEF_MAKSURA => (
         &["\u{0635}\u{0649}"],
-        ["\u{FD05}", "", "", "\u{FD21}"]
+        ['\u{FD05}', '\0', '\0', '\u{FD21}']
     ),
     ARABIC_LIGATURE_SAD_WITH_HAH => (
         &["\u{0635}\u{062D}"],
-        ["\u{FC20}", "\u{FCB1}", "", ""]
+        ['\u{FC20}', '\u{FCB1}', '\0', '\0']
     ),
     ARABIC_LIGATURE_SAD_WITH_HAH_WITH_HAH => (
         &["\u{0635}\u{062D}\u{062D}"],
-        ["", "\u{FD65}", "", "\u{FD64}"]
+        ['\0', '\u{FD65}', '\0', '\u{FD64}']
     ),
     ARABIC_LIGATURE_SAD_WITH_HAH_WITH_YEH => (
         &["\u{0635}\u{062D}\u{064A}"],
-        ["", "", "", "\u{FDA9}"]
+        ['\0', '\0', '\0', '\u{FDA9}']
     ),
     ARABIC_LIGATURE_SAD_WITH_KHAH => (
         &["\u{0635}\u{062E}"],
-        ["", "\u{FCB2}", "", ""]
+        ['\0', '\u{FCB2}', '\0', '\0']
     ),
     ARABIC_LIGATURE_SAD_WITH_MEEM => (
         &["\u{0635}\u{0645}"],
-        ["\u{FC21}", "\u{FCB3}", "", ""]
+        ['\u{FC21}', '\u{FCB3}', '\0', '\0']
     ),
     ARABIC_LIGATURE_SAD_WITH_MEEM_WITH_MEEM => (
         &["\u{0635}\u{0645}\u{0645}"],
-        ["", "\u{FDC5}", "", "\u{FD66}"]
+        ['\0', '\u{FDC5}', '\0', '\u{FD66}']
     ),
     ARABIC_LIGATURE_SAD_WITH_REH => (
         &["\u{0635}\u{0631}"],
-        ["\u{FD0F}", "", "", "\u{FD2B}"]
+        ['\u{FD0F}', '\0', '\0', '\u{FD2B}']
     ),
     ARABIC_LIGATURE_SAD_WITH_YEH => (
         &["\u{0635}\u{064A}"],
-        ["\u{FD06}", "", "", "\u{FD22}"]
+        ['\u{FD06}', '\0', '\0', '\u{FD22}']
     ),
     ARABIC_LIGATURE_SALLA_USED_AS_KORANIC_STOP_SIGN => (
         &["\u{0635}\u{0644}\u{06D2}"],
-        ["\u{FDF0}", "", "", ""]
+        ['\u{FDF0}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_SEEN_WITH_ALEF_MAKSURA => (
         &["\u{0633}\u{0649}"],
-        ["\u{FCFB}", "", "", "\u{FD17}"]
+        ['\u{FCFB}', '\0', '\0', '\u{FD17}']
     ),
     ARABIC_LIGATURE_SEEN_WITH_HAH => (
         &["\u{0633}\u{062D}"],
-        ["\u{FC1D}", "\u{FCAE}", "\u{FD35}", ""]
+        ['\u{FC1D}', '\u{FCAE}', '\u{FD35}', '\0']
     ),
     ARABIC_LIGATURE_SEEN_WITH_HAH_WITH_JEEM => (
         &["\u{0633}\u{062D}\u{062C}"],
-        ["", "\u{FD5C}", "", ""]
+        ['\0', '\u{FD5C}', '\0', '\0']
     ),
     ARABIC_LIGATURE_SEEN_WITH_HEH => (
         &["\u{0633}\u{0647}"],
-        ["", "\u{FD31}", "\u{FCE8}", ""]
+        ['\0', '\u{FD31}', '\u{FCE8}', '\0']
     ),
     ARABIC_LIGATURE_SEEN_WITH_JEEM => (
         &["\u{0633}\u{062C}"],
-        ["\u{FC1C}", "\u{FCAD}", "\u{FD34}", ""]
+        ['\u{FC1C}', '\u{FCAD}', '\u{FD34}', '\0']
     ),
     ARABIC_LIGATURE_SEEN_WITH_JEEM_WITH_ALEF_MAKSURA => (
         &["\u{0633}\u{062C}\u{0649}"],
-        ["", "", "", "\u{FD5E}"]
+        ['\0', '\0', '\0', '\u{FD5E}']
     ),
     ARABIC_LIGATURE_SEEN_WITH_JEEM_WITH_HAH => (
         &["\u{0633}\u{062C}\u{062D}"],
-        ["", "\u{FD5D}", "", ""]
+        ['\0', '\u{FD5D}', '\0', '\0']
     ),
     ARABIC_LIGATURE_SEEN_WITH_KHAH => (
         &["\u{0633}\u{062E}"],
-        ["\u{FC1E}", "\u{FCAF}", "\u{FD36}", ""]
+        ['\u{FC1E}', '\u{FCAF}', '\u{FD36}', '\0']
     ),
     ARABIC_LIGATURE_SEEN_WITH_KHAH_WITH_ALEF_MAKSURA => (
         &["\u{0633}\u{062E}\u{0649}"],
-        ["", "", "", "\u{FDA8}"]
+        ['\0', '\0', '\0', '\u{FDA8}']
     ),
     ARABIC_LIGATURE_SEEN_WITH_KHAH_WITH_YEH => (
         &["\u{0633}\u{062E}\u{064A}"],
-        ["", "", "", "\u{FDC6}"]
+        ['\0', '\0', '\0', '\u{FDC6}']
     ),
     ARABIC_LIGATURE_SEEN_WITH_MEEM => (
         &["\u{0633}\u{0645}"],
-        ["\u{FC1F}", "\u{FCB0}", "\u{FCE7}", ""]
+        ['\u{FC1F}', '\u{FCB0}', '\u{FCE7}', '\0']
     ),
     ARABIC_LIGATURE_SEEN_WITH_MEEM_WITH_HAH => (
         &["\u{0633}\u{0645}\u{062D}"],
-        ["", "\u{FD60}", "", "\u{FD5F}"]
+        ['\0', '\u{FD60}', '\0', '\u{FD5F}']
     ),
     ARABIC_LIGATURE_SEEN_WITH_MEEM_WITH_JEEM => (
         &["\u{0633}\u{0645}\u{062C}"],
-        ["", "\u{FD61}", "", ""]
+        ['\0', '\u{FD61}', '\0', '\0']
     ),
     ARABIC_LIGATURE_SEEN_WITH_MEEM_WITH_MEEM => (
         &["\u{0633}\u{0645}\u{0645}"],
-        ["", "\u{FD63}", "", "\u{FD62}"]
+        ['\0', '\u{FD63}', '\0', '\u{FD62}']
     ),
     ARABIC_LIGATURE_SEEN_WITH_REH => (
         &["\u{0633}\u{0631}"],
-        ["\u{FD0E}", "", "", "\u{FD2A}"]
+        ['\u{FD0E}', '\0', '\0', '\u{FD2A}']
     ),
     ARABIC_LIGATURE_SEEN_WITH_YEH => (
         &["\u{0633}\u{064A}"],
-        ["\u{FCFC}", "", "", "\u{FD18}"]
+        ['\u{FCFC}', '\0', '\0', '\u{FD18}']
     ),
 
     // Arabic ligatures with Shadda, the order of characters doesn't matter
     ARABIC_LIGATURE_SHADDA_WITH_DAMMATAN_ISOLATED_FORM => (
         &["\u{064C}\u{0651}", "\u{0651}\u{064C}"],
-        ["\u{FC5E}", "\u{FC5E}", "\u{FC5E}", "\u{FC5E}"]
+        ['\u{FC5E}', '\u{FC5E}', '\u{FC5E}', '\u{FC5E}']
     ),
     ARABIC_LIGATURE_SHADDA_WITH_KASRATAN_ISOLATED_FORM => (
         &["\u{064D}\u{0651}", "\u{0651}\u{064D}"],
-        ["\u{FC5F}", "\u{FC5F}", "\u{FC5F}", "\u{FC5F}"]
+        ['\u{FC5F}', '\u{FC5F}', '\u{FC5F}', '\u{FC5F}']
     ),
     ARABIC_LIGATURE_SHADDA_WITH_FATHA_ISOLATED_FORM => (
         &["\u{064E}\u{0651}", "\u{0651}\u{064E}"],
-        ["\u{FC60}", "\u{FC60}", "\u{FC60}", "\u{FC60}"]
+        ['\u{FC60}', '\u{FC60}', '\u{FC60}', '\u{FC60}']
     ),
     ARABIC_LIGATURE_SHADDA_WITH_DAMMA_ISOLATED_FORM => (
         &["\u{064F}\u{0651}", "\u{0651}\u{064F}"],
-        ["\u{FC61}", "\u{FC61}", "\u{FC61}", "\u{FC61}"]
+        ['\u{FC61}', '\u{FC61}', '\u{FC61}', '\u{FC61}']
     ),
     ARABIC_LIGATURE_SHADDA_WITH_KASRA_ISOLATED_FORM => (
         &["\u{0650}\u{0651}", "\u{0651}\u{0650}"],
-        ["\u{FC62}", "\u{FC62}", "\u{FC62}", "\u{FC62}"]
+        ['\u{FC62}', '\u{FC62}', '\u{FC62}', '\u{FC62}']
     ),
     ARABIC_LIGATURE_SHADDA_WITH_SUPERSCRIPT_ALEF => (
         &["\u{0651}\u{0670}", "\u{0670}\u{0651}"],
-        ["\u{FC63}", "", "", ""]
+        ['\u{FC63}', '\0', '\0', '\0']
     ),
 
     // There is a special case when they are with Tatweel
     ARABIC_LIGATURE_SHADDA_WITH_FATHA_MEDIAL_FORM => (
         &["\u{0640}\u{064E}\u{0651}", "\u{0640}\u{0651}\u{064E}"],
-        ["\u{FCF2}", "\u{FCF2}", "\u{FCF2}", "\u{FCF2}"]
+        ['\u{FCF2}', '\u{FCF2}', '\u{FCF2}', '\u{FCF2}']
     ),
     ARABIC_LIGATURE_SHADDA_WITH_DAMMA_MEDIAL_FORM => (
         &["\u{0640}\u{064F}\u{0651}", "\u{0640}\u{0651}\u{064F}"],
-        ["\u{FCF3}", "\u{FCF3}", "\u{FCF3}", "\u{FCF3}"]
+        ['\u{FCF3}', '\u{FCF3}', '\u{FCF3}', '\u{FCF3}']
     ),
     ARABIC_LIGATURE_SHADDA_WITH_KASRA_MEDIAL_FORM => (
         &["\u{0640}\u{0650}\u{0651}", "\u{0640}\u{0651}\u{0650}"],
-        ["\u{FCF4}", "\u{FCF4}", "\u{FCF4}", "\u{FCF4}"]
+        ['\u{FCF4}', '\u{FCF4}', '\u{FCF4}', '\u{FCF4}']
     ),
 
     // Repeated with different keys to be backward compatible
     ARABIC_LIGATURE_SHADDA_WITH_FATHA => (
         &["\u{0640}\u{064E}\u{0651}", "\u{0640}\u{0651}\u{064E}"],
-        ["\u{FCF2}", "\u{FCF2}", "\u{FCF2}", "\u{FCF2}"]
+        ['\u{FCF2}', '\u{FCF2}', '\u{FCF2}', '\u{FCF2}']
     ),
     ARABIC_LIGATURE_SHADDA_WITH_DAMMA => (
         &["\u{0640}\u{064F}\u{0651}", "\u{0640}\u{0651}\u{064F}"],
-        ["\u{FCF3}", "\u{FCF3}", "\u{FCF3}", "\u{FCF3}"]
+        ['\u{FCF3}', '\u{FCF3}', '\u{FCF3}', '\u{FCF3}']
     ),
     ARABIC_LIGATURE_SHADDA_WITH_KASRA => (
         &["\u{0640}\u{0650}\u{0651}", "\u{0640}\u{0651}\u{0650}"],
-        ["\u{FCF4}", "\u{FCF4}", "\u{FCF4}", "\u{FCF4}"]
+        ['\u{FCF4}', '\u{FCF4}', '\u{FCF4}', '\u{FCF4}']
     ),
 
     ARABIC_LIGATURE_SHEEN_WITH_ALEF_MAKSURA => (
         &["\u{0634}\u{0649}"],
-        ["\u{FCFD}", "", "", "\u{FD19}"]
+        ['\u{FCFD}', '\0', '\0', '\u{FD19}']
     ),
     ARABIC_LIGATURE_SHEEN_WITH_HAH => (
         &["\u{0634}\u{062D}"],
-        ["\u{FD0A}", "\u{FD2E}", "\u{FD38}", "\u{FD26}"]
+        ['\u{FD0A}', '\u{FD2E}', '\u{FD38}', '\u{FD26}']
     ),
     ARABIC_LIGATURE_SHEEN_WITH_HAH_WITH_MEEM => (
         &["\u{0634}\u{062D}\u{0645}"],
-        ["", "\u{FD68}", "", "\u{FD67}"]
+        ['\0', '\u{FD68}', '\0', '\u{FD67}']
     ),
     ARABIC_LIGATURE_SHEEN_WITH_HAH_WITH_YEH => (
         &["\u{0634}\u{062D}\u{064A}"],
-        ["", "", "", "\u{FDAA}"]
+        ['\0', '\0', '\0', '\u{FDAA}']
     ),
     ARABIC_LIGATURE_SHEEN_WITH_HEH => (
         &["\u{0634}\u{0647}"],
-        ["", "\u{FD32}", "\u{FCEA}", ""]
+        ['\0', '\u{FD32}', '\u{FCEA}', '\0']
     ),
     ARABIC_LIGATURE_SHEEN_WITH_JEEM => (
         &["\u{0634}\u{062C}"],
-        ["\u{FD09}", "\u{FD2D}", "\u{FD37}", "\u{FD25}"]
+        ['\u{FD09}', '\u{FD2D}', '\u{FD37}', '\u{FD25}']
     ),
     ARABIC_LIGATURE_SHEEN_WITH_JEEM_WITH_YEH => (
         &["\u{0634}\u{062C}\u{064A}"],
-        ["", "", "", "\u{FD69}"]
+        ['\0', '\0', '\0', '\u{FD69}']
     ),
     ARABIC_LIGATURE_SHEEN_WITH_KHAH => (
         &["\u{0634}\u{062E}"],
-        ["\u{FD0B}", "\u{FD2F}", "\u{FD39}", "\u{FD27}"]
+        ['\u{FD0B}', '\u{FD2F}', '\u{FD39}', '\u{FD27}']
     ),
     ARABIC_LIGATURE_SHEEN_WITH_MEEM => (
         &["\u{0634}\u{0645}"],
-        ["\u{FD0C}", "\u{FD30}", "\u{FCE9}", "\u{FD28}"]
+        ['\u{FD0C}', '\u{FD30}', '\u{FCE9}', '\u{FD28}']
     ),
     ARABIC_LIGATURE_SHEEN_WITH_MEEM_WITH_KHAH => (
         &["\u{0634}\u{0645}\u{062E}"],
-        ["", "\u{FD6B}", "", "\u{FD6A}"]
+        ['\0', '\u{FD6B}', '\0', '\u{FD6A}']
     ),
     ARABIC_LIGATURE_SHEEN_WITH_MEEM_WITH_MEEM => (
         &["\u{0634}\u{0645}\u{0645}"],
-        ["", "\u{FD6D}", "", "\u{FD6C}"]
+        ['\0', '\u{FD6D}', '\0', '\u{FD6C}']
     ),
     ARABIC_LIGATURE_SHEEN_WITH_REH => (
         &["\u{0634}\u{0631}"],
-        ["\u{FD0D}", "", "", "\u{FD29}"]
+        ['\u{FD0D}', '\0', '\0', '\u{FD29}']
     ),
     ARABIC_LIGATURE_SHEEN_WITH_YEH => (
         &["\u{0634}\u{064A}"],
-        ["\u{FCFE}", "", "", "\u{FD1A}"]
+        ['\u{FCFE}', '\0', '\0', '\u{FD1A}']
     ),
     ARABIC_LIGATURE_TAH_WITH_ALEF_MAKSURA => (
         &["\u{0637}\u{0649}"],
-        ["\u{FCF5}", "", "", "\u{FD11}"]
+        ['\u{FCF5}', '\0', '\0', '\u{FD11}']
     ),
     ARABIC_LIGATURE_TAH_WITH_HAH => (
         &["\u{0637}\u{062D}"],
-        ["\u{FC26}", "\u{FCB8}", "", ""]
+        ['\u{FC26}', '\u{FCB8}', '\0', '\0']
     ),
     ARABIC_LIGATURE_TAH_WITH_MEEM => (
         &["\u{0637}\u{0645}"],
-        ["\u{FC27}", "\u{FD33}", "\u{FD3A}", ""]
+        ['\u{FC27}', '\u{FD33}', '\u{FD3A}', '\0']
     ),
     ARABIC_LIGATURE_TAH_WITH_MEEM_WITH_HAH => (
         &["\u{0637}\u{0645}\u{062D}"],
-        ["", "\u{FD72}", "", "\u{FD71}"]
+        ['\0', '\u{FD72}', '\0', '\u{FD71}']
     ),
     ARABIC_LIGATURE_TAH_WITH_MEEM_WITH_MEEM => (
         &["\u{0637}\u{0645}\u{0645}"],
-        ["", "\u{FD73}", "", ""]
+        ['\0', '\u{FD73}', '\0', '\0']
     ),
     ARABIC_LIGATURE_TAH_WITH_MEEM_WITH_YEH => (
         &["\u{0637}\u{0645}\u{064A}"],
-        ["", "", "", "\u{FD74}"]
+        ['\0', '\0', '\0', '\u{FD74}']
     ),
     ARABIC_LIGATURE_TAH_WITH_YEH => (
         &["\u{0637}\u{064A}"],
-        ["\u{FCF6}", "", "", "\u{FD12}"]
+        ['\u{FCF6}', '\0', '\0', '\u{FD12}']
     ),
     ARABIC_LIGATURE_TEH_WITH_ALEF_MAKSURA => (
         &["\u{062A}\u{0649}"],
-        ["\u{FC0F}", "", "", "\u{FC74}"]
+        ['\u{FC0F}', '\0', '\0', '\u{FC74}']
     ),
     ARABIC_LIGATURE_TEH_WITH_HAH => (
         &["\u{062A}\u{062D}"],
-        ["\u{FC0C}", "\u{FCA2}", "", ""]
+        ['\u{FC0C}', '\u{FCA2}', '\0', '\0']
     ),
     ARABIC_LIGATURE_TEH_WITH_HAH_WITH_JEEM => (
         &["\u{062A}\u{062D}\u{062C}"],
-        ["", "\u{FD52}", "", "\u{FD51}"]
+        ['\0', '\u{FD52}', '\0', '\u{FD51}']
     ),
     ARABIC_LIGATURE_TEH_WITH_HAH_WITH_MEEM => (
         &["\u{062A}\u{062D}\u{0645}"],
-        ["", "\u{FD53}", "", ""]
+        ['\0', '\u{FD53}', '\0', '\0']
     ),
     ARABIC_LIGATURE_TEH_WITH_HEH => (
         &["\u{062A}\u{0647}"],
-        ["", "\u{FCA5}", "\u{FCE4}", ""]
+        ['\0', '\u{FCA5}', '\u{FCE4}', '\0']
     ),
     ARABIC_LIGATURE_TEH_WITH_JEEM => (
         &["\u{062A}\u{062C}"],
-        ["\u{FC0B}", "\u{FCA1}", "", ""]
+        ['\u{FC0B}', '\u{FCA1}', '\0', '\0']
     ),
     ARABIC_LIGATURE_TEH_WITH_JEEM_WITH_ALEF_MAKSURA => (
         &["\u{062A}\u{062C}\u{0649}"],
-        ["", "", "", "\u{FDA0}"]
+        ['\0', '\0', '\0', '\u{FDA0}']
     ),
     ARABIC_LIGATURE_TEH_WITH_JEEM_WITH_MEEM => (
         &["\u{062A}\u{062C}\u{0645}"],
-        ["", "\u{FD50}", "", ""]
+        ['\0', '\u{FD50}', '\0', '\0']
     ),
     ARABIC_LIGATURE_TEH_WITH_JEEM_WITH_YEH => (
         &["\u{062A}\u{062C}\u{064A}"],
-        ["", "", "", "\u{FD9F}"]
+        ['\0', '\0', '\0', '\u{FD9F}']
     ),
     ARABIC_LIGATURE_TEH_WITH_KHAH => (
         &["\u{062A}\u{062E}"],
-        ["\u{FC0D}", "\u{FCA3}", "", ""]
+        ['\u{FC0D}', '\u{FCA3}', '\0', '\0']
     ),
     ARABIC_LIGATURE_TEH_WITH_KHAH_WITH_ALEF_MAKSURA => (
         &["\u{062A}\u{062E}\u{0649}"],
-        ["", "", "", "\u{FDA2}"]
+        ['\0', '\0', '\0', '\u{FDA2}']
     ),
     ARABIC_LIGATURE_TEH_WITH_KHAH_WITH_MEEM => (
         &["\u{062A}\u{062E}\u{0645}"],
-        ["", "\u{FD54}", "", ""]
+        ['\0', '\u{FD54}', '\0', '\0']
     ),
     ARABIC_LIGATURE_TEH_WITH_KHAH_WITH_YEH => (
         &["\u{062A}\u{062E}\u{064A}"],
-        ["", "", "", "\u{FDA1}"]
+        ['\0', '\0', '\0', '\u{FDA1}']
     ),
     ARABIC_LIGATURE_TEH_WITH_MEEM => (
         &["\u{062A}\u{0645}"],
-        ["\u{FC0E}", "\u{FCA4}", "\u{FCE3}", "\u{FC72}"]
+        ['\u{FC0E}', '\u{FCA4}', '\u{FCE3}', '\u{FC72}']
     ),
     ARABIC_LIGATURE_TEH_WITH_MEEM_WITH_ALEF_MAKSURA => (
         &["\u{062A}\u{0645}\u{0649}"],
-        ["", "", "", "\u{FDA4}"]
+        ['\0', '\0', '\0', '\u{FDA4}']
     ),
     ARABIC_LIGATURE_TEH_WITH_MEEM_WITH_HAH => (
         &["\u{062A}\u{0645}\u{062D}"],
-        ["", "\u{FD56}", "", ""]
+        ['\0', '\u{FD56}', '\0', '\0']
     ),
     ARABIC_LIGATURE_TEH_WITH_MEEM_WITH_JEEM => (
         &["\u{062A}\u{0645}\u{062C}"],
-        ["", "\u{FD55}", "", ""]
+        ['\0', '\u{FD55}', '\0', '\0']
     ),
     ARABIC_LIGATURE_TEH_WITH_MEEM_WITH_KHAH => (
         &["\u{062A}\u{0645}\u{062E}"],
-        ["", "\u{FD57}", "", ""]
+        ['\0', '\u{FD57}', '\0', '\0']
     ),
     ARABIC_LIGATURE_TEH_WITH_MEEM_WITH_YEH => (
         &["\u{062A}\u{0645}\u{064A}"],
-        ["", "", "", "\u{FDA3}"]
+        ['\0', '\0', '\0', '\u{FDA3}']
     ),
     ARABIC_LIGATURE_TEH_WITH_NOON => (
         &["\u{062A}\u{0646}"],
-        ["", "", "", "\u{FC73}"]
+        ['\0', '\0', '\0', '\u{FC73}']
     ),
     ARABIC_LIGATURE_TEH_WITH_REH => (
         &["\u{062A}\u{0631}"],
-        ["", "", "", "\u{FC70}"]
+        ['\0', '\0', '\0', '\u{FC70}']
     ),
     ARABIC_LIGATURE_TEH_WITH_YEH => (
         &["\u{062A}\u{064A}"],
-        ["\u{FC10}", "", "", "\u{FC75}"]
+        ['\u{FC10}', '\0', '\0', '\u{FC75}']
     ),
     ARABIC_LIGATURE_TEH_WITH_ZAIN => (
         &["\u{062A}\u{0632}"],
-        ["", "", "", "\u{FC71}"]
+        ['\0', '\0', '\0', '\u{FC71}']
     ),
     ARABIC_LIGATURE_THAL_WITH_SUPERSCRIPT_ALEF => (
         &["\u{0630}\u{0670}"],
-        ["\u{FC5B}", "", "", ""]
+        ['\u{FC5B}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_THEH_WITH_ALEF_MAKSURA => (
         &["\u{062B}\u{0649}"],
-        ["\u{FC13}", "", "", "\u{FC7A}"]
+        ['\u{FC13}', '\0', '\0', '\u{FC7A}']
     ),
     ARABIC_LIGATURE_THEH_WITH_HEH => (
         &["\u{062B}\u{0647}"],
-        ["", "", "\u{FCE6}", ""]
+        ['\0', '\0', '\u{FCE6}', '\0']
     ),
     ARABIC_LIGATURE_THEH_WITH_JEEM => (
         &["\u{062B}\u{062C}"],
-        ["\u{FC11}", "", "", ""]
+        ['\u{FC11}', '\0', '\0', '\0']
     ),
     ARABIC_LIGATURE_THEH_WITH_MEEM => (
         &["\u{062B}\u{0645}"],
-        ["\u{FC12}", "\u{FCA6}", "\u{FCE5}", "\u{FC78}"]
+        ['\u{FC12}', '\u{FCA6}', '\u{FCE5}', '\u{FC78}']
     ),
     ARABIC_LIGATURE_THEH_WITH_NOON => (
         &["\u{062B}\u{0646}"],
-        ["", "", "", "\u{FC79}"]
+        ['\0', '\0', '\0', '\u{FC79}']
     ),
     ARABIC_LIGATURE_THEH_WITH_REH => (
         &["\u{062B}\u{0631}"],
-        ["", "", "", "\u{FC76}"]
+        ['\0', '\0', '\0', '\u{FC76}']
     ),
     ARABIC_LIGATURE_THEH_WITH_YEH => (
         &["\u{062B}\u{064A}"],
-        ["\u{FC14}", "", "", "\u{FC7B}"]
+        ['\u{FC14}', '\0', '\0', '\u{FC7B}']
     ),
     ARABIC_LIGATURE_THEH_WITH_ZAIN => (
         &["\u{062B}\u{0632}"],
-        ["", "", "", "\u{FC77}"]
+        ['\0', '\0', '\0', '\u{FC77}']
     ),
     ARABIC_LIGATURE_UIGHUR_KIRGHIZ_YEH_WITH_HAMZA_ABOVE_WITH_ALEF_MAKSURA => (
         &["\u{0626}\u{0649}"],
-        ["\u{FBF9}", "\u{FBFB}", "", "\u{FBFA}"]
+        ['\u{FBF9}', '\u{FBFB}', '\0', '\u{FBFA}']
     ),
     ARABIC_LIGATURE_YEH_WITH_ALEF_MAKSURA => (
         &["\u{064A}\u{0649}"],
-        ["\u{FC59}", "", "", "\u{FC95}"]
+        ['\u{FC59}', '\0', '\0', '\u{FC95}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAH => (
         &["\u{064A}\u{062D}"],
-        ["\u{FC56}", "\u{FCDB}", "", ""]
+        ['\u{FC56}', '\u{FCDB}', '\0', '\0']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAH_WITH_YEH => (
         &["\u{064A}\u{062D}\u{064A}"],
-        ["", "", "", "\u{FDAE}"]
+        ['\0', '\0', '\0', '\u{FDAE}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_AE => (
         &["\u{0626}\u{06D5}"],
-        ["\u{FBEC}", "", "", "\u{FBED}"]
+        ['\u{FBEC}', '\0', '\0', '\u{FBED}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_ALEF => (
         &["\u{0626}\u{0627}"],
-        ["\u{FBEA}", "", "", "\u{FBEB}"]
+        ['\u{FBEA}', '\0', '\0', '\u{FBEB}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_ALEF_MAKSURA => (
         &["\u{0626}\u{0649}"],
-        ["\u{FC03}", "", "", "\u{FC68}"]
+        ['\u{FC03}', '\0', '\0', '\u{FC68}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_E => (
         &["\u{0626}\u{06D0}"],
-        ["\u{FBF6}", "\u{FBF8}", "", "\u{FBF7}"]
+        ['\u{FBF6}', '\u{FBF8}', '\0', '\u{FBF7}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_HAH => (
         &["\u{0626}\u{062D}"],
-        ["\u{FC01}", "\u{FC98}", "", ""]
+        ['\u{FC01}', '\u{FC98}', '\0', '\0']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_HEH => (
         &["\u{0626}\u{0647}"],
-        ["", "\u{FC9B}", "\u{FCE0}", ""]
+        ['\0', '\u{FC9B}', '\u{FCE0}', '\0']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_JEEM => (
         &["\u{0626}\u{062C}"],
-        ["\u{FC00}", "\u{FC97}", "", ""]
+        ['\u{FC00}', '\u{FC97}', '\0', '\0']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_KHAH => (
         &["\u{0626}\u{062E}"],
-        ["", "\u{FC99}", "", ""]
+        ['\0', '\u{FC99}', '\0', '\0']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_MEEM => (
         &["\u{0626}\u{0645}"],
-        ["\u{FC02}", "\u{FC9A}", "\u{FCDF}", "\u{FC66}"]
+        ['\u{FC02}', '\u{FC9A}', '\u{FCDF}', '\u{FC66}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_NOON => (
         &["\u{0626}\u{0646}"],
-        ["", "", "", "\u{FC67}"]
+        ['\0', '\0', '\0', '\u{FC67}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_OE => (
         &["\u{0626}\u{06C6}"],
-        ["\u{FBF2}", "", "", "\u{FBF3}"]
+        ['\u{FBF2}', '\0', '\0', '\u{FBF3}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_REH => (
         &["\u{0626}\u{0631}"],
-        ["", "", "", "\u{FC64}"]
+        ['\0', '\0', '\0', '\u{FC64}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_U => (
         &["\u{0626}\u{06C7}"],
-        ["\u{FBF0}", "", "", "\u{FBF1}"]
+        ['\u{FBF0}', '\0', '\0', '\u{FBF1}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_WAW => (
         &["\u{0626}\u{0648}"],
-        ["\u{FBEE}", "", "", "\u{FBEF}"]
+        ['\u{FBEE}', '\0', '\0', '\u{FBEF}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_YEH => (
         &["\u{0626}\u{064A}"],
-        ["\u{FC04}", "", "", "\u{FC69}"]
+        ['\u{FC04}', '\0', '\0', '\u{FC69}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_YU => (
         &["\u{0626}\u{06C8}"],
-        ["\u{FBF4}", "", "", "\u{FBF5}"]
+        ['\u{FBF4}', '\0', '\0', '\u{FBF5}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HAMZA_ABOVE_WITH_ZAIN => (
         &["\u{0626}\u{0632}"],
-        ["", "", "", "\u{FC65}"]
+        ['\0', '\0', '\0', '\u{FC65}']
     ),
     ARABIC_LIGATURE_YEH_WITH_HEH => (
         &["\u{064A}\u{0647}"],
-        ["", "\u{FCDE}", "\u{FCF1}", ""]
+        ['\0', '\u{FCDE}', '\u{FCF1}', '\0']
     ),
     ARABIC_LIGATURE_YEH_WITH_JEEM => (
         &["\u{064A}\u{062C}"],
-        ["\u{FC55}", "\u{FCDA}", "", ""]
+        ['\u{FC55}', '\u{FCDA}', '\0', '\0']
     ),
     ARABIC_LIGATURE_YEH_WITH_JEEM_WITH_YEH => (
         &["\u{064A}\u{062C}\u{064A}"],
-        ["", "", "", "\u{FDAF}"]
+        ['\0', '\0', '\0', '\u{FDAF}']
     ),
     ARABIC_LIGATURE_YEH_WITH_KHAH => (
         &["\u{064A}\u{062E}"],
-        ["\u{FC57}", "\u{FCDC}", "", ""]
+        ['\u{FC57}', '\u{FCDC}', '\0', '\0']
     ),
     ARABIC_LIGATURE_YEH_WITH_MEEM => (
         &["\u{064A}\u{0645}"],
-        ["\u{FC58}", "\u{FCDD}", "\u{FCF0}", "\u{FC93}"]
+        ['\u{FC58}', '\u{FCDD}', '\u{FCF0}', '\u{FC93}']
     ),
     ARABIC_LIGATURE_YEH_WITH_MEEM_WITH_MEEM => (
         &["\u{064A}\u{0645}\u{0645}"],
-        ["", "\u{FD9D}", "", "\u{FD9C}"]
+        ['\0', '\u{FD9D}', '\0', '\u{FD9C}']
     ),
     ARABIC_LIGATURE_YEH_WITH_MEEM_WITH_YEH => (
         &["\u{064A}\u{0645}\u{064A}"],
-        ["", "", "", "\u{FDB0}"]
+        ['\0', '\0', '\0', '\u{FDB0}']
     ),
     ARABIC_LIGATURE_YEH_WITH_NOON => (
         &["\u{064A}\u{0646}"],
-        ["", "", "", "\u{FC94}"]
+        ['\0', '\0', '\0', '\u{FC94}']
     ),
     ARABIC_LIGATURE_YEH_WITH_REH => (
         &["\u{064A}\u{0631}"],
-        ["", "", "", "\u{FC91}"]
+        ['\0', '\0', '\0', '\u{FC91}']
     ),
     ARABIC_LIGATURE_YEH_WITH_YEH => (
         &["\u{064A}\u{064A}"],
-        ["\u{FC5A}", "", "", "\u{FC96}"]
+        ['\u{FC5A}', '\0', '\0', '\u{FC96}']
     ),
     ARABIC_LIGATURE_YEH_WITH_ZAIN => (
         &["\u{064A}\u{0632}"],
-        ["", "", "", "\u{FC92}"]
+        ['\0', '\0', '\0', '\u{FC92}']
     ),
     ARABIC_LIGATURE_ZAH_WITH_MEEM => (
         &["\u{0638}\u{0645}"],
-        ["\u{FC28}", "\u{FCB9}", "\u{FD3B}", ""]
+        ['\u{FC28}', '\u{FCB9}', '\u{FD3B}', '\0']
     ),
 ];

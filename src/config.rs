@@ -1,4 +1,4 @@
-use crate::{letters::LettersType, ligatures::*, ArabicReshaper};
+use crate::{form::LettersType, ligatures::*, ArabicReshaper};
 
 /// Flags to enable some or all groups of ligatures
 #[derive(Default, Clone, Copy)]
@@ -46,6 +46,7 @@ pub enum Language {
     /// work with both unicode and classic Arabic-Kurdish keybouard
     Kurdish,
     /// Custom language
+    #[cfg_attr(feature = "serde", serde(skip))] // we can't serialize this
     Custom(&'static [LettersType]),
 }
 
@@ -58,6 +59,27 @@ impl std::fmt::Display for Language {
             Language::Custom(_) => "Custom",
         }
         .fmt(f)
+    }
+}
+
+/// Hold state of whatever some ligatures are enabled or not.
+#[derive(Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Ligatures {
+    pub(crate) vec: Vec<bool>,
+}
+
+impl Ligatures {
+    fn new(vec: Vec<bool>) -> Self {
+        Self { vec }
+    }
+
+    fn is_any_enabled(&self) -> bool {
+        self.vec.iter().any(|enabled| *enabled)
+    }
+
+    pub fn is_ligature_enabled(&self, name: LigatureNames) -> bool {
+        self.vec[name as usize]
     }
 }
 
@@ -88,7 +110,7 @@ pub struct ReshaperConfig {
     /// Separate ligatures configuration take precedence over it.
     /// When `support_ligatures` is disabled,
     /// separate ligatures configurations are ignored.
-    pub(crate) ligatures: Vec<bool>,
+    pub ligatures: Ligatures,
 }
 
 impl Default for ReshaperConfig {
@@ -113,7 +135,7 @@ impl Default for ReshaperConfig {
             support_zwj: true,
             use_unshaped_instead_of_isolated: false,
             support_ligatures: true,
-            ligatures,
+            ligatures: Ligatures::new(ligatures),
         }
     }
 }
@@ -146,7 +168,7 @@ impl ReshaperConfig {
         Self {
             language,
             support_ligatures: !ligatures_flags.is_none_enabled(),
-            ligatures,
+            ligatures: Ligatures::new(ligatures),
             ..Default::default()
         }
     }
@@ -239,9 +261,9 @@ impl ReshaperConfig {
     }
 
     /// Update the given [LigatureNames].
-    pub fn update_ligature(&mut self, key: LigatureNames, enable: bool) {
-        self.ligatures[key as usize] = enable;
+    pub fn update_ligature(&mut self, name: LigatureNames, enable: bool) {
+        self.ligatures.vec[name as usize] = enable;
         // enable or disable ligatures if anything is enabled
-        self.support_ligatures = self.ligatures.iter().any(|enabled| *enabled);
+        self.support_ligatures = self.ligatures.is_any_enabled();
     }
 }

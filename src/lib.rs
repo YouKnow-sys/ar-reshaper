@@ -44,12 +44,11 @@ pub use config::{Language, ReshaperConfig};
 pub use reshaper::ArabicReshaper;
 
 pub mod config;
+pub mod form;
 pub mod iterator;
 pub mod letters;
 mod ligatures;
 mod reshaper;
-#[cfg(test)]
-mod tests;
 
 pub mod prelude {
     pub use crate::config::*;

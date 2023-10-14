@@ -1,4 +1,4 @@
-use crate::ArabicReshaper;
+use ar_reshaper::ArabicReshaper;
 
 #[test]
 fn default_reshaping() {
