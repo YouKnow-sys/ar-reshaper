@@ -241,6 +241,17 @@ impl ArabicReshaper {
         result
     }
 
+    /// Reshape the given text and return the reshaped string.
+    /// this method support to filter the characters that we wantt to reshape.
+    /// its usefull when we want to keep the connection correct but don't reshape
+    /// all the string.
+    pub fn reshape_filter<S>(&self, text: S) -> String
+    where
+        S: AsRef<str>,
+    {
+        todo!()
+    }
+
     /// A safe way to modify the config ([ReshaperConfig]) after creating
     /// the [ArabicReshaper].
     pub fn modify_config<F>(&mut self, func: F)
