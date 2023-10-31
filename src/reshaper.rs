@@ -41,6 +41,14 @@ impl ArabicReshaper {
         }
     }
 
+    /// Check whatever the text need reshaping or not.
+    pub fn need_reshape<S>(&self, text: S) -> bool
+    where
+        S: AsRef<str>
+    {
+        text.as_ref().chars().any(|c| self.letters.contains_key(&c))
+    }
+
     /// Reshape the given line and return the reshaped string
     pub fn reshape<S>(&self, text: S) -> String
     where
