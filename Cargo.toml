@@ -7,7 +7,7 @@ description = "A no-std crate to reconstruct Arabic, turkish and persian sentenc
 repository = "https://github.com/YouKnow-sys/ar-reshaper"
 documentation = "https://docs.rs/ar-reshaper"
 license = "MIT"
-keywords = ["arabic", "persian", "turkish", "reshape", "no-std", "no_std"]
+keywords = ["arabic", "persian", "turkish", "reshape", "no-std"]
 readme = "README.md"
 categories = ["algorithms"]
 
