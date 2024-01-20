@@ -12,7 +12,7 @@ readme = "README.md"
 categories = ["algorithms"]
 
 [features]
-default = ["ttf-parser"]
+default = []
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"], optional = true }
