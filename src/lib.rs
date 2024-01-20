@@ -35,14 +35,14 @@
 //!     println!("{line}");
 //! }
 //! ```
-//! 
+//!
 //! You can also check if a text need reshaping or not, this method can be
 //! useful when you dont want a copy of original string in case of no reshape.
 //! ```rust
 //! use ar_reshaper::ArabicReshaper;
-//! 
+//!
 //! let reshaper = ArabicReshaper::default();
-//! 
+//!
 //! let text = "من به reshape نیاز دارم";
 //! if reshaper.need_reshape(text) {
 //!     println!("{}", reshaper.reshape(text));
@@ -51,7 +51,13 @@
 //!
 //! A rusty rewrite of [python-arabic-reshaper](https://github.com/mpcabd/python-arabic-reshaper)
 //! You can check the original repository for more information.
+#![no_std]
 #![forbid(unsafe_code)]
+#![warn(missing_copy_implementations)]
+
+extern crate alloc;
+
+use alloc::string::String;
 
 pub use config::{Language, ReshaperConfig};
 pub use reshaper::ArabicReshaper;

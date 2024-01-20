@@ -1,21 +1,22 @@
 [package]
 name = "ar-reshaper"
-version = "1.3.1"
+version = "1.5.0"
 authors = ["Saeid Ghafari <saeid025@yahoo.com>"]
 edition = "2021"
-description = "Reconstruct Arabic sentences to be used in applications that don't support Arabic script."
+description = "A no-std crate to reconstruct Arabic, turkish and persian sentences to be used in applications that don't support Arabic script."
 repository = "https://github.com/YouKnow-sys/ar-reshaper"
 documentation = "https://docs.rs/ar-reshaper"
 license = "MIT"
-keywords = ["arabic", "persian", "turkish", "reshape"]
+keywords = ["arabic", "persian", "turkish", "reshape", "no-std", "no_std"]
+readme = "README.md"
 categories = ["algorithms"]
 
 [features]
-default = []
+default = ["ttf-parser"]
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"], optional = true }
-ttf-parser = { version = "0.19", optional = true }
+ttf-parser = { version = "0.20", optional = true }
 
 [[example]]
 name = "reshape_line"

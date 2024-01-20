@@ -1,3 +1,5 @@
+use alloc::string::String;
+
 use crate::{ArabicReshaper, ReshaperConfig};
 
 /// Iterator for the [ArabicReshaper], you can use this type to iterate over

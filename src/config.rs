@@ -1,17 +1,33 @@
 use crate::{form::LettersType, ligatures::*, ArabicReshaper};
 
 /// Flags to enable some or all groups of ligatures
-#[derive(Default, Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct LigaturesFlags {
+    #[cfg_attr(
+        feature = "ttf-parser",
+        doc = "We dont check and enable default ligatures when loading ligatures from font"
+    )]
+    pub default_ligatures: bool,
     pub sentences_ligatures: bool,
     pub words_ligatures: bool,
     pub letters_ligatures: bool,
 }
 
 impl LigaturesFlags {
-    /// Enable all ligatures
-    pub fn all() -> Self {
+    /// Enable just some of defaults ligatures
+    pub const fn default() -> Self {
         Self {
+            default_ligatures: true,
+            sentences_ligatures: false,
+            words_ligatures: false,
+            letters_ligatures: false,
+        }
+    }
+
+    /// Enable all ligatures
+    pub const fn all() -> Self {
+        Self {
+            default_ligatures: false,
             sentences_ligatures: true,
             words_ligatures: true,
             letters_ligatures: true,
@@ -19,8 +35,9 @@ impl LigaturesFlags {
     }
 
     /// Disable all ligatures
-    pub fn none() -> Self {
+    pub const fn none() -> Self {
         Self {
+            default_ligatures: false,
             sentences_ligatures: false,
             words_ligatures: false,
             letters_ligatures: false,
@@ -28,7 +45,7 @@ impl LigaturesFlags {
     }
 
     /// Check if no ligature is enabled
-    pub fn is_none_enabled(&self) -> bool {
+    pub const fn is_none_enabled(&self) -> bool {
         !self.sentences_ligatures && !self.words_ligatures && !self.letters_ligatures
     }
 }
@@ -50,8 +67,8 @@ pub enum Language {
     Custom(&'static [LettersType]),
 }
 
-impl std::fmt::Display for Language {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for Language {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Language::Arabic => "Arabic",
             Language::ArabicV2 => "ArabicV2",
@@ -66,20 +83,49 @@ impl std::fmt::Display for Language {
 #[derive(Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Ligatures {
-    pub(crate) vec: Vec<bool>,
+    #[cfg_attr(feature = "serde", serde(with = "arrays"))]
+    pub(crate) list: [bool; LIGATURES.len()],
 }
 
 impl Ligatures {
-    fn new(vec: Vec<bool>) -> Self {
-        Self { vec }
+    /// Create a new [Ligatures] with all the ligatures disabled
+    pub const fn empty() -> Self {
+        Self {
+            list: [false; LIGATURES.len()],
+        }
     }
 
-    fn is_any_enabled(&self) -> bool {
-        self.vec.iter().any(|enabled| *enabled)
+    /// Enable some default ligatures
+    pub const fn default() -> Self {
+        let mut ligatures = Self::empty();
+
+        ligatures.list[LigatureNames::ARABIC_LIGATURE_ALLAH as usize] = true;
+        ligatures.list[LigatureNames::ARABIC_LIGATURE_LAM_WITH_ALEF as usize] = true;
+        ligatures.list[LigatureNames::ARABIC_LIGATURE_LAM_WITH_ALEF_WITH_HAMZA_ABOVE as usize] =
+            true;
+        ligatures.list[LigatureNames::ARABIC_LIGATURE_LAM_WITH_ALEF_WITH_HAMZA_BELOW as usize] =
+            true;
+        ligatures.list[LigatureNames::ARABIC_LIGATURE_LAM_WITH_ALEF_WITH_MADDA_ABOVE as usize] =
+            true;
+
+        ligatures
     }
 
-    pub fn is_ligature_enabled(&self, name: LigatureNames) -> bool {
-        self.vec[name as usize]
+    /// Is any ligature enabled
+    const fn is_any_enabled(&self) -> bool {
+        let mut idx = 0;
+        while idx < self.list.len() {
+            if self.list[idx] {
+                return true;
+            }
+            idx += 1;
+        }
+        false
+    }
+
+    /// Is the input ligature enabled
+    pub const fn is_ligature_enabled(&self, name: LigatureNames) -> bool {
+        self.list[name as usize]
     }
 }
 
@@ -115,7 +161,7 @@ pub struct ReshaperConfig {
 
 impl Default for ReshaperConfig {
     fn default() -> Self {
-        let mut ligatures = vec![false; LIGATURES.len()];
+        let mut ligatures = Ligatures::empty();
         // enable some default ones
         for name in [
             LigatureNames::ARABIC_LIGATURE_ALLAH,
@@ -124,7 +170,7 @@ impl Default for ReshaperConfig {
             LigatureNames::ARABIC_LIGATURE_LAM_WITH_ALEF_WITH_HAMZA_BELOW,
             LigatureNames::ARABIC_LIGATURE_LAM_WITH_ALEF_WITH_MADDA_ABOVE,
         ] {
-            ligatures[name as usize] = true;
+            ligatures.list[name as usize] = true;
         }
 
         Self {
@@ -135,41 +181,58 @@ impl Default for ReshaperConfig {
             support_zwj: true,
             use_unshaped_instead_of_isolated: false,
             support_ligatures: true,
-            ligatures: Ligatures::new(ligatures),
+            ligatures,
         }
     }
 }
 
 impl ReshaperConfig {
     /// Create a new [ReshaperConfig] with the given [LigaturesFlags].
-    pub fn new(language: Language, ligatures_flags: LigaturesFlags) -> Self {
-        let mut ligatures = vec![false; LIGATURES.len()];
+    pub const fn new(language: Language, ligatures_flags: LigaturesFlags) -> Self {
+        let mut ligatures = if ligatures_flags.default_ligatures {
+            Ligatures::default()
+        } else {
+            Ligatures::empty()
+        };
 
         if !ligatures_flags.is_none_enabled() {
             let LigaturesFlags {
                 sentences_ligatures,
                 words_ligatures,
                 letters_ligatures,
+                ..
             } = ligatures_flags;
 
-            for (enabled, range) in [
-                (sentences_ligatures, SENTENCES_LIGATURES_RANGE),
-                (words_ligatures, WORDS_LIGATURES_RANGE),
-                (letters_ligatures, LETTERS_LIGATURES_RANGE),
-            ] {
-                if enabled {
-                    ligatures[range]
-                        .iter_mut()
-                        .for_each(|enabled| *enabled = true);
-                }
+            macro_rules! enable_ligatures {
+                ($range:expr) => {{
+                    let mut idx = $range.start;
+                    while idx < $range.end {
+                        ligatures.list[idx] = true;
+                        idx += 1;
+                    }
+                }};
+            }
+
+            if sentences_ligatures {
+                enable_ligatures!(SENTENCES_LIGATURES_RANGE)
+            }
+            if words_ligatures {
+                enable_ligatures!(WORDS_LIGATURES_RANGE)
+            }
+            if letters_ligatures {
+                enable_ligatures!(LETTERS_LIGATURES_RANGE)
             }
         }
 
         Self {
             language,
             support_ligatures: !ligatures_flags.is_none_enabled(),
-            ligatures: Ligatures::new(ligatures),
-            ..Default::default()
+            ligatures,
+            delete_harakat: true,
+            shift_harakat_position: false,
+            delete_tatweel: false,
+            support_zwj: true,
+            use_unshaped_instead_of_isolated: false,
         }
     }
 
@@ -181,13 +244,15 @@ impl ReshaperConfig {
     /// Create a new [ReshaperConfig] based on the input **true type font** font.\
     /// Keep in mind that we are currently using `ttf-parser` crate for parsing ttf
     /// files, this crate doesn't support cmap8, this may change in future.
+    // This function need more testing, I haven't tested well yet.
     #[cfg(feature = "ttf-parser")]
     pub fn from_font(
         bytes: &[u8],
         language: Language,
         ligatures_flags: LigaturesFlags,
-    ) -> Result<Self, String> {
-        use crate::letters::{Letters, ISOLATED};
+    ) -> Result<Self, alloc::string::String> {
+        use crate::{form::Forms, letters::Letters};
+        use alloc::{string::ToString, vec::Vec};
         use ttf_parser::Face;
 
         let font = Face::parse(bytes, 0).map_err(|e| e.to_string())?;
@@ -200,33 +265,31 @@ impl ReshaperConfig {
         if let Some(tables) = font.tables().cmap {
             'top: for (_, v) in Letters::new(language).0 {
                 for table in tables.subtables {
-                    if let Some(v) = v[ISOLATED as usize].chars().next() {
-                        if table.glyph_index(v as _).is_some() {
-                            continue 'top;
-                        }
+                    if v.isolated != '\0' && table.glyph_index(v.isolated as _).is_some() {
+                        continue 'top;
                     }
                 }
                 config.use_unshaped_instead_of_isolated = true;
                 break;
             }
 
-            let mut process_ligatures = |ligatures: &[(&[&str], [&str; 4])]| {
-                for (idx, (_, chars)) in ligatures.iter().enumerate() {
-                    let forms: Vec<_> = chars.iter().filter(|c| c.is_empty()).collect();
+            let mut process_ligatures = |ligatures: &[(&'static [&'static str], Forms)]| {
+                for (idx, (_, forms)) in ligatures.iter().enumerate() {
+                    let forms: Vec<_> = [forms.isolated, forms.initial, forms.medial, forms.end]
+                        .into_iter()
+                        .filter(|c| *c != '\0')
+                        .collect();
                     let mut n = forms.len();
                     for form in forms {
                         for table in tables.subtables {
                             // we are filtering empty string, so it should be ok to just unwrap
-                            if table
-                                .glyph_index(form.chars().next().unwrap() as _)
-                                .is_some()
-                            {
+                            if table.glyph_index(form as _).is_some() {
                                 n -= 1;
                                 break;
                             }
                         }
                     }
-                    config.ligatures[idx] = n == 0;
+                    config.ligatures.list[idx] = n == 0;
                 }
             };
 
@@ -235,6 +298,7 @@ impl ReshaperConfig {
                     sentences_ligatures,
                     words_ligatures,
                     letters_ligatures,
+                    ..
                 } = ligatures_flags;
 
                 for (enabled, range) in [
@@ -253,6 +317,7 @@ impl ReshaperConfig {
             // to disable all the ligatures
             config
                 .ligatures
+                .list
                 .iter_mut()
                 .for_each(|enabled| *enabled = false);
         }
@@ -262,8 +327,71 @@ impl ReshaperConfig {
 
     /// Update the given [LigatureNames].
     pub fn update_ligature(&mut self, name: LigatureNames, enable: bool) {
-        self.ligatures.vec[name as usize] = enable;
+        self.ligatures.list[name as usize] = enable;
         // enable or disable ligatures if anything is enabled
         self.support_ligatures = self.ligatures.is_any_enabled();
+    }
+}
+
+/// A simple hack for serialize and deserialize arrays that are bigger then 32.
+/// we have to use this because serde dont have support for const generic in array size...
+#[cfg(feature = "serde")]
+mod arrays {
+    use alloc::vec::Vec;
+    use core::{convert::TryInto, marker::PhantomData};
+
+    use serde::{
+        de::{SeqAccess, Visitor},
+        ser::SerializeTuple,
+        Deserialize, Deserializer, Serialize, Serializer,
+    };
+    pub fn serialize<S: Serializer, T: Serialize, const N: usize>(
+        data: &[T; N],
+        ser: S,
+    ) -> Result<S::Ok, S::Error> {
+        let mut s = ser.serialize_tuple(N)?;
+        for item in data {
+            s.serialize_element(item)?;
+        }
+        s.end()
+    }
+
+    struct ArrayVisitor<T, const N: usize>(PhantomData<T>);
+
+    impl<'de, T, const N: usize> Visitor<'de> for ArrayVisitor<T, N>
+    where
+        T: Deserialize<'de>,
+    {
+        type Value = [T; N];
+
+        fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            formatter.write_str(&alloc::format!("an array of length {}", N))
+        }
+
+        #[inline]
+        fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+        where
+            A: SeqAccess<'de>,
+        {
+            // can be optimized using MaybeUninit
+            let mut data = Vec::with_capacity(N);
+            for _ in 0..N {
+                match (seq.next_element())? {
+                    Some(val) => data.push(val),
+                    None => return Err(serde::de::Error::invalid_length(N, &self)),
+                }
+            }
+            match data.try_into() {
+                Ok(arr) => Ok(arr),
+                Err(_) => unreachable!(),
+            }
+        }
+    }
+    pub fn deserialize<'de, D, T, const N: usize>(deserializer: D) -> Result<[T; N], D::Error>
+    where
+        D: Deserializer<'de>,
+        T: Deserialize<'de>,
+    {
+        deserializer.deserialize_tuple(N, ArrayVisitor::<T, N>(PhantomData))
     }
 }

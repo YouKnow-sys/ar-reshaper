@@ -1,4 +1,4 @@
-use std::ops::Index;
+use core::ops::Index;
 
 use crate::{form::*, Language};
 
@@ -18,7 +18,7 @@ impl Default for Letters {
 
 impl Letters {
     /// Create a new [`Letters`] with the given [`Language`]
-    pub fn new(language: Language) -> Self {
+    pub const fn new(language: Language) -> Self {
         Self(match language {
             Language::Arabic => &letters_db::LETTERS_ARABIC,
             Language::ArabicV2 => &letters_db::LETTERS_ARABIC_V2,

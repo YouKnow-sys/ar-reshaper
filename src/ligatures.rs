@@ -20,7 +20,7 @@
 //   3. Letters
 // This way we make sure we replace the longest ligatures first
 
-use std::ops::Range;
+use core::ops::Range;
 
 use crate::form::Forms;
 

@@ -4,7 +4,7 @@ pub const TATWEEL: char = '\u{0640}';
 pub const ZWJ: char = '\u{200D}';
 
 /// Arabic letters
-pub static LETTERS_ARABIC: [LettersType; 78] = [
+pub const LETTERS_ARABIC: [LettersType; 78] = [
     // ARABIC LETTER HAMZA
     ('\u{0621}', Forms::new('\u{FE80}', '\0', '\0', '\0')),
     // ARABIC LETTER ALEF WITH MADDA ABOVE
@@ -308,7 +308,7 @@ pub static LETTERS_ARABIC: [LettersType; 78] = [
 ];
 
 /// Arabic letters version 2
-pub static LETTERS_ARABIC_V2: [LettersType; 80] = [
+pub const LETTERS_ARABIC_V2: [LettersType; 80] = [
     // ARABIC LETTER HAMZA
     ('\u{0621}', Forms::new('\u{FE80}', '\0', '\0', '\0')),
     // ARABIC LETTER ALEF WITH MADDA ABOVE
@@ -619,7 +619,7 @@ pub static LETTERS_ARABIC_V2: [LettersType; 80] = [
 ];
 
 /// Kurdish letters
-pub static LETTERS_KURDISH: [LettersType; 80] = [
+pub const LETTERS_KURDISH: [LettersType; 80] = [
     // ARABIC LETTER HAMZA
     ('\u{0621}', Forms::new('\u{FE80}', '\0', '\0', '\0')),
     // ARABIC LETTER ALEF WITH MADDA ABOVE

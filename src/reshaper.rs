@@ -1,4 +1,6 @@
-use std::{collections::HashMap, ops::RangeInclusive};
+use core::ops::RangeInclusive;
+
+use alloc::{collections::BTreeMap, string::String, vec::Vec};
 
 use crate::{
     config::ReshaperConfig,
@@ -34,7 +36,7 @@ pub struct ArabicReshaper {
 
 impl ArabicReshaper {
     /// Create a new [ArabicReshaper] using the given config
-    pub fn new(config: ReshaperConfig) -> Self {
+    pub const fn new(config: ReshaperConfig) -> Self {
         Self {
             letters: Letters::new(config.language),
             config,
@@ -44,7 +46,7 @@ impl ArabicReshaper {
     /// Check whatever the text need reshaping or not.
     pub fn need_reshape<S>(&self, text: S) -> bool
     where
-        S: AsRef<str>
+        S: AsRef<str>,
     {
         text.as_ref().chars().any(|c| self.letters.contains_key(&c))
     }
@@ -76,7 +78,7 @@ impl ArabicReshaper {
         };
 
         let mut output = Vec::new();
-        let mut position_harakat: HashMap<isize, Vec<char>> = HashMap::new();
+        let mut position_harakat: BTreeMap<isize, Vec<char>> = BTreeMap::new();
 
         for letter in text.chars() {
             if HARAKAT_RE.iter().any(|h| h.contains(&letter)) {
@@ -145,7 +147,7 @@ impl ArabicReshaper {
             }
 
             for ((tmatchs, forms), enabled) in
-                LIGATURES.iter().zip(self.config.ligatures.vec.iter())
+                LIGATURES.iter().zip(self.config.ligatures.list.iter())
             {
                 if !enabled {
                     continue;
@@ -198,8 +200,10 @@ impl ArabicReshaper {
 
         let mut result = Vec::with_capacity(text.len());
 
-        if !delete_harakat && position_harakat.contains_key(&-1) {
-            result.extend(position_harakat[&-1].clone());
+        if !delete_harakat {
+            if let Some(ph) = position_harakat.get(&-1) {
+                result.extend(ph);
+            }
         }
 
         for (i, (letter, form)) in output.into_iter().enumerate() {
@@ -207,8 +211,10 @@ impl ArabicReshaper {
                 result.push(self.letters.get_form(letter, form))
             }
 
-            if !delete_harakat && position_harakat.contains_key(&(i as isize)) {
-                result.extend(position_harakat[&(i as isize)].clone());
+            if !delete_harakat {
+                if let Some(ph) = position_harakat.get(&(i as isize)) {
+                    result.extend(ph);
+                }
             }
         }
 
